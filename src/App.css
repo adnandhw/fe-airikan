@@ -244,11 +244,7 @@ body,
   }
 }
 
-.card-hover:active {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-hover);
-  border-color: transparent;
-}
+
 
 /* Category Specifics */
 .category-img-wrapper {
@@ -274,9 +270,7 @@ body,
   }
 }
 
-.card-hover:active .category-img-wrapper img {
-  transform: scale(1.1);
-}
+
 
 .category-content {
   padding: 1.25rem;
@@ -350,9 +344,7 @@ body,
   }
 }
 
-.card-hover:active .product-img {
-  transform: scale(1.08);
-}
+
 
 .product-details {
   padding: 1.25rem;

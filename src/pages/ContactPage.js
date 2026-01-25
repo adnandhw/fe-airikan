@@ -50,14 +50,14 @@ const Contact = () => {
                   <h4 className="fw-bold mb-0">Tentang Kami</h4>
                 </div>
                 <p className="text-secondary mx-2" style={{ lineHeight: "1.8", textAlign: "justify" }}>
-                  Air Ikan Store merupakan usaha mikro yang bergerak di bidang penjualan ikan hias dan Ikan Predator air tawar.
+                  Air Ikan Store merupakan usaha mikro yang bergerak di bidang penjualan ikan hias dan ikan predator air tawar.
                   Usaha ini berdiri sejak tahun 2021 sebagai bentuk respon terhadap meningkatnya minat masyarakat terhadap hobi memelihara ikan hias dan ikan predator,
                   baik sebagai sarana hiburan, elemen dekorasi, maupun koleksi pribadi.</p>
                 <p className="text-secondary mx-2" style={{ lineHeight: "1.8", textAlign: "justify" }}>
                   Berlokasi di wilayah Otista, Jakarta Timur, serta di Pasar Ikan Hias Jatinegara Jakarta Timur Lapak No. 139, Air Ikan Store hadir untuk menyediakan beragam pilihan ikan berkualitas dengan perawatan yang baik dan sehat.
-                  Selain itu, kami juga menyediakan perlengkapan pendukung akuarium guna membantu pelanggan menciptakan lingkungan hidup yang ideal bagi ikan peliharaan mereka.</p>
+                  Selain itu, Air Ikan Store berkomitmen menghadirkan ikan dengan kualitas terbaik melalui perawatan yang optimal dan terpercaya.</p>
                 <p className="text-secondary mx-2" style={{ lineHeight: "1.8", textAlign: "justify" }}>
-                  Dengan mengutamakan kualitas produk dan kepuasan pelanggan, Air Ikan Store berkomitmen untuk menjadi mitra terpercaya bagi para pecinta ikan hias dan Ikan Predator,
+                  Dengan mengutamakan kualitas produk dan kepuasan pelanggan, Air Ikan Store berkomitmen untuk menjadi mitra terpercaya bagi para pecinta ikan hias dan ikan predator,
                   baik pemula maupun penghobi berpengalaman.</p>
               </div>
 

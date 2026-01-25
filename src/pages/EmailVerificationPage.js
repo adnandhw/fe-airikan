@@ -69,7 +69,10 @@ const EmailVerificationPage = () => {
                         <h4 className="mt-3">Berhasil!</h4>
                         <p>{message}</p>
                         <p className="text-muted small">Anda akan diarahkan ke halaman login dalam beberapa detik...</p>
-                        <button className="btn btn-primary mt-2" onClick={() => navigate("/", { state: { openLogin: true, verificationSuccess: true } })}>
+                        <button
+                            className="primaryBtn mt-4 w-100 justify-content-center"
+                            onClick={() => navigate("/", { state: { openLogin: true, verificationSuccess: true } })}
+                        >
                             Login Sekarang
                         </button>
                     </>

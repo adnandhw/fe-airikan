@@ -67,7 +67,7 @@ const JoinReseller = () => {
                     <div className="text-center py-5">
                         <h2 className="display-5 fw-bold mb-4" style={gradientTextStyle}>Gabung Program Reseller Kami</h2>
                         <p className="lead mb-5 text-muted mx-auto" style={{ maxWidth: '600px' }}>
-                            Dapatkan harga eksklusif, melakukan pemesanan sesuai kebutuhan dengan proses yang mudah dan dukungan khusus dengan menjadi reseller resmi Air Ikan.
+                            Dapatkan harga eksklusif, sistem Pemesanan yang mudah dan dukungan khusus dengan menjadi reseller resmi Air Ikan.
                         </p>
 
                         <div className="row justify-content-center gap-4 mb-5">
@@ -89,7 +89,7 @@ const JoinReseller = () => {
                                 <div className="p-4 rounded-4 bg-light h-100">
                                     <i className="bi bi-megaphone-fill fs-1 mb-3" style={gradientTextStyle}></i>
                                     <h5 className="fw-bold">Peluang Reseller</h5>
-                                    <p className="small text-muted">Gabung sebagai reseller Air Ikan dengan sistem yang mudah dan menguntungkan.</p>
+                                    <p className="small text-muted">Gabung sebagai reseller Air Ikan dengan sistem yang menguntungkan.</p>
                                 </div>
                             </div>
                         </div>

@@ -85,7 +85,7 @@ const ProductResellerPage = () => {
 
                     {/* Header & Controls */}
                     <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
-                        <div>
+                        <div className="text-center text-md-start">
                             <h2 className="main-title mb-1">Produk Resellers</h2>
                             <p className="text-muted mb-0">Penawaran harga khusus untuk resellers (Min. 10 pcs)</p>
                         </div>

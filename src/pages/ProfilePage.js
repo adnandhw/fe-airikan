@@ -102,6 +102,11 @@ const ProfilePage = () => {
         confirmPassword: "",
     });
 
+    // Password Visibility State
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     // ... (rest of code)
 
 
@@ -379,14 +384,31 @@ const ProfilePage = () => {
         const selectedItems = cart
             .filter(item => item.selected !== false)
             .map(item => {
-                if (item.id) return item;
+                // Prioritize the existing flag from the cart (set by Detail pages)
+                // This prevents "Datz" (Regular) from becoming "Reseller" just because names match.
 
-                // Try to patch missing ID
-                const foundProduct = product.find(p => p.name === item.name);
-                if (foundProduct) return { ...item, id: foundProduct.id };
+                if (item.is_reseller === true) {
+                    const found = productReseller.find(p => p.name === item.name);
+                    return found ? { ...item, id: found.id, is_reseller: true } : item;
+                }
 
+                if (item.is_reseller === false) {
+                    const found = product.find(p => p.name === item.name);
+                    return found ? { ...item, id: found.id, is_reseller: false } : item;
+                }
+
+                // Fallback for legacy items (missing flag) - Only then do we guess by name
+                // 1. Check Reseller List
                 const foundReseller = productReseller.find(p => p.name === item.name);
-                if (foundReseller) return { ...item, id: foundReseller.id };
+                if (foundReseller) {
+                    return { ...item, id: foundReseller.id, is_reseller: true };
+                }
+
+                // 2. Check Regular List
+                const foundProduct = product.find(p => p.name === item.name);
+                if (foundProduct) {
+                    return { ...item, id: foundProduct.id, is_reseller: false };
+                }
 
                 return item;
             });
@@ -580,7 +602,7 @@ const ProfilePage = () => {
         setMessage({ type: "", text: "" });
 
         if (passwordData.password !== passwordData.confirmPassword) {
-            setMessage({ type: "danger", text: "Password konfirmasi tidak cocok." });
+            setMessage({ type: "danger", text: "Kata sandi konfirmasi tidak cocok." });
             setLoading(false);
             return;
         }
@@ -606,12 +628,12 @@ const ProfilePage = () => {
             const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/api/buyers/${userId}`, updateData);
 
             if (response.data.success) {
-                setMessage({ type: "success", text: "Password berhasil diperbarui!" });
+                setMessage({ type: "success", text: "Kata sandi berhasil diperbarui!" });
                 setPasswordData({ currentPassword: "", password: "", confirmPassword: "" }); // Reset password fields
                 login(response.data.data); // Update context
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                setMessage({ type: "danger", text: response.data.message || "Gagal memperbarui password." });
+                setMessage({ type: "danger", text: response.data.message || "Gagal memperbarui kata sandi." });
             }
         } catch (error) {
             console.error("Error updating password:", error);
@@ -667,7 +689,7 @@ const ProfilePage = () => {
                                         className={`list-group-item list-group-item-action border-0 px-4 py-3 ${activeTab === "changePassword" ? "bg-light fw-bold text-primary" : "text-secondary"}`}
                                         onClick={() => { handleTabChange("changePassword"); setIsSidebarOpen(false); }}
                                     >
-                                        <i className="bi bi-key me-2"></i> Ganti Password
+                                        <i className="bi bi-key me-2"></i> Ganti Kata Sandi
                                     </button>
                                     <button
                                         className={`list-group-item list-group-item-action border-0 px-4 py-3 ${activeTab === "carts" ? "bg-light fw-bold text-primary" : "text-secondary"}`}
@@ -876,47 +898,74 @@ const ProfilePage = () => {
 
                                 {activeTab === "changePassword" && (
                                     <div>
-                                        <h4 className="fw-bold mb-4">Ganti Password</h4>
+                                        <h4 className="fw-bold mb-4">Ganti Kata Sandi</h4>
                                         <form onSubmit={handlePasswordSubmit}>
                                             <div className="row g-3">
                                                 <div className="col-12">
-                                                    <label className="form-label fw-bold small">Password Lama <span className="text-danger">*</span></label>
-                                                    <input
-                                                        type="password"
-                                                        className="form-control"
-                                                        name="currentPassword"
-                                                        value={passwordData.currentPassword}
-                                                        onChange={handlePasswordChange}
-                                                        required
-                                                    />
+                                                    <label className="form-label fw-bold small">Kata Sandi Lama <span className="text-danger">*</span></label>
+                                                    <div className="input-group">
+                                                        <input
+                                                            type={showCurrentPassword ? "text" : "password"}
+                                                            className="form-control"
+                                                            name="currentPassword"
+                                                            value={passwordData.currentPassword}
+                                                            onChange={handlePasswordChange}
+                                                            required
+                                                        />
+                                                        <button
+                                                            className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                                        >
+                                                            <i className={`bi ${showCurrentPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <div className="col-12">
-                                                    <label className="form-label fw-bold small">Password Baru</label>
-                                                    <input
-                                                        type="password"
-                                                        className="form-control"
-                                                        name="password"
-                                                        value={passwordData.password}
-                                                        onChange={handlePasswordChange}
-                                                        required
-                                                        minLength={6}
-                                                    />
+                                                    <label className="form-label fw-bold small">Kata Sandi Baru</label>
+                                                    <div className="input-group">
+                                                        <input
+                                                            type={showNewPassword ? "text" : "password"}
+                                                            className="form-control"
+                                                            name="password"
+                                                            value={passwordData.password}
+                                                            onChange={handlePasswordChange}
+                                                            required
+                                                            minLength={6}
+                                                        />
+                                                        <button
+                                                            className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                                        >
+                                                            <i className={`bi ${showNewPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <div className="col-12">
-                                                    <label className="form-label fw-bold small">Konfirmasi Password Baru</label>
-                                                    <input
-                                                        type="password"
-                                                        className="form-control"
-                                                        name="confirmPassword"
-                                                        value={passwordData.confirmPassword}
-                                                        onChange={handlePasswordChange}
-                                                        required
-                                                        minLength={6}
-                                                    />
+                                                    <label className="form-label fw-bold small">Konfirmasi Kata Sandi Baru</label>
+                                                    <div className="input-group">
+                                                        <input
+                                                            type={showConfirmPassword ? "text" : "password"}
+                                                            className="form-control"
+                                                            name="confirmPassword"
+                                                            value={passwordData.confirmPassword}
+                                                            onChange={handlePasswordChange}
+                                                            required
+                                                            minLength={6}
+                                                        />
+                                                        <button
+                                                            className="btn btn-outline-secondary"
+                                                            type="button"
+                                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                        >
+                                                            <i className={`bi ${showConfirmPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                                 <div className="col-12 mt-4 text-end">
                                                     <button type="submit" className="primaryBtn px-5 py-2 fw-bold" disabled={loading}>
-                                                        {loading ? "Menyimpan..." : "Simpan Password"}
+                                                        {loading ? "Menyimpan..." : "Simpan Kata Sandi"}
                                                     </button>
                                                 </div>
                                             </div>

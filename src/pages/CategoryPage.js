@@ -32,8 +32,8 @@ const CategoryPage = () => {
 
       <section className="section-padding">
         <div className="container">
-          <div className="section-title">
-            <div>
+          <div className="section-title justify-content-center justify-content-md-start">
+            <div className="text-center text-md-start">
               <h2 className="main-title">Semua Kategori</h2>
             </div>
           </div>
