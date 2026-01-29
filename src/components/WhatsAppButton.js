@@ -90,7 +90,7 @@ const WhatsAppButton = () => {
             return;
         }
 
-        const phoneNumber = "6281290054641";
+        const phoneNumber = "6281284124422";
         let message = "Halo Admin Air Ikan, saya mau tanya produk...";
 
         // Check if on Product Detail Page
@@ -135,7 +135,7 @@ const WhatsAppButton = () => {
                 touchAction: 'none'
             }}
         >
-            <i className="bi bi-whatsapp fs-4" style={{color: "#f8f8f8" }}></i>
+            <i className="bi bi-whatsapp fs-4" style={{ color: "#f8f8f8" }}></i>
             <span className="fw-bold fs-6" style={{ color: "#f8f8f8" }}>Chat</span>
         </button>
     );

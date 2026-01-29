@@ -11,7 +11,7 @@ import LoginSuccessModal from "../components/LoginSuccessModal";
 const HomePage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { productReseller, user, setIsLoginModalOpen } = useContext(Context);
+  const { product, category, productReseller, user, setIsLoginModalOpen } = useContext(Context);
   const [showLoginSuccess, setShowLoginSuccess] = useState(false);
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const HomePage = () => {
               <h2 className="main-title">Kategori</h2>
             </div>
           </div>
-          <CategoryCard />
+          <CategoryCard data={category.slice(0, 6)} />
         </div>
       </section>
 
@@ -79,7 +79,7 @@ const HomePage = () => {
               </div>
               <a href="/product-reseller" className="btn btn-outline-primary rounded-pill px-4">Lihat Semua</a>
             </div>
-            <ProductResellerCard data={productReseller.filter(p => p.is_active !== false).slice(0, 4)} />
+            <ProductResellerCard data={productReseller.filter(p => p.is_active !== false).slice(0, 12)} />
           </div>
         </section>
       )}
@@ -92,7 +92,7 @@ const HomePage = () => {
             </div>
             <a href="/product" className="btn btn-outline-primary rounded-pill px-4">Lihat Semua</a>
           </div>
-          <Product />
+          <Product data={product.slice(0, 12)} />
         </div>
       </section>
 

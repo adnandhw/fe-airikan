@@ -250,7 +250,7 @@ const ProductResellerDetail = () => {
 
                 const productList = `- [RESELLER] ${data.name} (x${quantity}) @ ${formattedPrice}`;
                 const waMessage = `Halo Admin, saya ada pesanan RESELLER baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${buyerAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ATotal: ${formattedTotal} (Belum termasuk Biaya Pengiriman)%0A%0AMohon diproses, terima kasih.`;
-                const waUrl = `https://wa.me/6281290054641?text=${waMessage}`;
+                const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
                 window.open(waUrl, '_blank');
                 const userSlug = user.username || user.firstName?.toLowerCase() || "user";

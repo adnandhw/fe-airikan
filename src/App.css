@@ -244,6 +244,20 @@ body,
   }
 }
 
+/* MOBILE TOUCH HOVER EFFECT */
+@media (hover: none) {
+  .card-hover:active {
+    transform: scale(1.05);
+    /* Sedikit membesar */
+    box-shadow: var(--shadow-hover);
+    border-color: transparent;
+    z-index: 10;
+    /* Supaya tidak tertutup card lain */
+    position: relative;
+    /* Required for z-index */
+  }
+}
+
 
 
 /* Category Specifics */

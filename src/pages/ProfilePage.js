@@ -505,7 +505,7 @@ const ProfilePage = () => {
 
                 // Construct WhatsApp Message
                 const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ATotal: ${formattedTotal} (Belum termasuk Biaya Pengiriman)%0A%0AMohon diproses, terima kasih.`;
-                const waUrl = `https://wa.me/6281290054641?text=${waMessage}`;
+                const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
                 // Open WhatsApp in new tab
                 window.open(waUrl, '_blank');
@@ -547,7 +547,7 @@ const ProfilePage = () => {
             if (res.data.success) {
                 // Generate WA URL
                 const waMessage = `Halo Admin, saya sudah upload bukti pembayaran untuk Transaksi ID: ${transactionId.toString().toUpperCase().substring(0, 8)}. Mohon dicek.`;
-                const waUrl = `https://wa.me/6281290054641?text=${waMessage}`;
+                const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
                 setSuccessWaUrl(waUrl);
                 setShowPaymentSuccess(true);
