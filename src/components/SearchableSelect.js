@@ -88,7 +88,23 @@ const SearchableSelect = ({ options, value, onChange, placeholder, disabled, isL
                         setFilteredOptions(options.filter(opt => opt[labelKey].toLowerCase().includes(searchTerm.toLowerCase())));
                     }}
                     disabled={disabled}
+                    style={{ paddingRight: value ? '40px' : 'default' }}
                 />
+                {value && !disabled && (
+                    <button
+                        className="btn border-0 position-absolute end-0 top-50 translate-middle-y me-5 z-3"
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSearchTerm('');
+                            onChange('');
+                            setIsOpen(false);
+                        }}
+                        style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+                    >
+                        <i className="bi bi-x-circle-fill text-muted" style={{ fontSize: '0.9rem' }}></i>
+                    </button>
+                )}
                 <span className="input-group-text bg-white">
                     <i className="bi bi-chevron-down text-secondary" style={{ fontSize: '0.8rem' }}></i>
                 </span>
