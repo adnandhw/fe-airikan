@@ -500,10 +500,13 @@ const ProfilePage = () => {
             return;
         }
 
-        // 3. Validate Courier Selection
-        if (distance > 0 && !selectedCourier) {
-            setMessage({ type: "danger", text: "Silakan pilih kurir pengiriman terlebih dahulu." });
+        if (!selectedCourier) {
+            setMessage({ type: "warning", text: "Silakan pilih kurir pengiriman terlebih dahulu." });
             setLoading(false);
+            const courierSection = document.getElementById('courier-section');
+            if (courierSection) {
+                courierSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return;
         }
 
@@ -1576,7 +1579,7 @@ const ProfilePage = () => {
                                                                 </div>
 
                                                                 {/* SHIPPING SECTION */}
-                                                                <div className="mb-3 pb-3 border-bottom">
+                                                                <div className="mb-3 pb-3 border-bottom" id="courier-section">
                                                                     <label className="fw-bold text-dark mb-2">Pilih Kurir Pengiriman</label>
                                                                     <div className="row g-2">
                                                                         {['TIKI', 'J&T', 'Grab/GoSend', 'Lalamove'].map(courier => (
