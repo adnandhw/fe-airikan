@@ -465,7 +465,7 @@ const ProfilePage = () => {
 
     // Clear courier error message when a courier is selected
     useEffect(() => {
-        if (selectedCourier && message.text && message.text.includes("kurir")) {
+        if (selectedCourier && message.text && (message.text.includes("kurir") || message.text.includes("produk"))) {
             setMessage({ type: "", text: "" });
         }
     }, [selectedCourier]);
@@ -1658,7 +1658,7 @@ const ProfilePage = () => {
 
                                                                 {/* SHIPPING SECTION */}
                                                                 <div className="mb-3 pb-3 border-bottom" id="courier-section">
-                                                                    {message.text && message.text.includes("kurir") && (
+                                                                    {message.text && (message.text.includes("kurir") || message.text.includes("produk")) && (
                                                                         <div className={`alert alert-${message.type} py-2 mb-3`} style={{ fontSize: '0.85rem' }}>
                                                                             <i className="bi bi-exclamation-triangle-fill me-2"></i>
                                                                             {message.text}
@@ -1675,7 +1675,19 @@ const ProfilePage = () => {
                                                                                 <div className="col-6" key={courier}>
                                                                                     <button
                                                                                         className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'} ${isTooFar ? 'opacity-50 grayscale' : ''}`}
-                                                                                        onClick={() => !isTooFar && setSelectedCourier(courier)}
+                                                                                        onClick={() => {
+                                                                                            if (isTooFar) return;
+
+                                                                                            // Check if any products are selected
+                                                                                            const hasSelectedItems = cart.some(item => item.selected !== false);
+                                                                                            if (!hasSelectedItems) {
+                                                                                                setMessage({ type: "danger", text: "Pilih minimal satu produk untuk checkout." });
+                                                                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                                                                return;
+                                                                                            }
+
+                                                                                            setSelectedCourier(courier);
+                                                                                        }}
                                                                                         disabled={isTooFar}
                                                                                         style={{ fontSize: '0.75rem', filter: isTooFar ? 'grayscale(1)' : 'none' }}
                                                                                         title={isTooFar ? `Maksimal jarak ${isGrab ? '40' : '60'}km` : ''}
