@@ -5,6 +5,7 @@ import { Context } from "../MyContext";
 
 import AddToCartSuccessModal from "../components/AddToCartSuccessModal";
 import LoginRequiredModal from "../components/LoginRequiredModal";
+import DOAModal from "../components/DOAModal";
 
 const ProductResellerDetail = () => {
     const { id } = useParams();
@@ -16,6 +17,7 @@ const ProductResellerDetail = () => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     const [showLoginRequired, setShowLoginRequired] = useState(false);
     const [loginMessage, setLoginMessage] = useState("");
+    const [showDOAModal, setShowDOAModal] = useState(false);
 
     const tableContainerRef = useRef(null); // Ref for scrolling
 
@@ -231,6 +233,11 @@ const ProductResellerDetail = () => {
                     message={loginMessage}
                 />
 
+                <DOAModal
+                    show={showDOAModal}
+                    onClose={() => setShowDOAModal(false)}
+                />
+
                 <div className="row g-3 align-items-stretch">
 
                     {/* 🔹 IMAGE */}
@@ -384,6 +391,14 @@ const ProductResellerDetail = () => {
 
                                     {/* TOTAL (Right) */}
                                     <div className="d-flex flex-column align-items-start align-items-md-end w-100 w-md-auto">
+                                        <div
+                                            className="text-primary small mb-1 cursor-pointer hover-underline"
+                                            style={{ fontSize: '0.75rem', cursor: 'pointer', fontWeight: '500' }}
+                                            onClick={() => setShowDOAModal(true)}
+                                        >
+                                            <i className="bi bi-shield-check me-1"></i>
+                                            Garansi DOA (Death On Arrival)
+                                        </div>
                                         <span className="text-secondary small mb-1" style={{ fontSize: '0.8rem' }}>Total Estimasi</span>
                                         <h4 className="text-success fw-bold m-0" style={{ fontSize: '1.1rem' }}>
                                             Rp {Number(effectivePrice * (Number(quantity) || 0)).toLocaleString("id-ID")}
