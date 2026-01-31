@@ -1740,6 +1740,27 @@ const ProfilePage = () => {
                                                                 <p className="mb-1 fw-bold">{trx.buyer_info.name}</p>
                                                                 <p className="mb-1 small text-muted"><i className="bi bi-telephone me-2"></i>{trx.buyer_info.phone}</p>
                                                                 <p className="mb-0 small text-muted"><i className="bi bi-geo-alt me-2"></i>{trx.buyer_info.address}</p>
+
+                                                                {trx.shipping_receipt_number && (
+                                                                    <div className="mt-3 p-3 bg-light rounded-3 border">
+                                                                        <div className="d-flex justify-content-between align-items-center">
+                                                                            <div>
+                                                                                <p className="mb-0 small text-muted text-uppercase fw-bold" style={{ fontSize: '0.65rem', letterSpacing: '1px' }}>Nomor Resi Pengiriman</p>
+                                                                                <p className="mb-0 fw-bold text-primary fs-6">{trx.shipping_receipt_number}</p>
+                                                                            </div>
+                                                                            <button
+                                                                                className="btn btn-sm btn-outline-primary"
+                                                                                onClick={() => {
+                                                                                    navigator.clipboard.writeText(trx.shipping_receipt_number);
+                                                                                    setToast("Nomor resi berhasil disalin!");
+                                                                                    setTimeout(() => setToast(""), 3000);
+                                                                                }}
+                                                                            >
+                                                                                <i className="bi bi-clipboard me-1"></i> Salin
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                             </div>
 
                                                             {/* Products */}
