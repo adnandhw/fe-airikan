@@ -451,13 +451,16 @@ const ProfilePage = () => {
 
     // Auto-clear all messages after 5 seconds
     useEffect(() => {
+        let timer;
         if (message.text) {
-            const timer = setTimeout(() => {
+            timer = setTimeout(() => {
                 setMessage({ type: "", text: "" });
             }, 5000);
-            return () => clearTimeout(timer);
         }
-    }, [message]);
+        return () => {
+            if (timer) clearTimeout(timer);
+        };
+    }, [message.text, message.type]);
 
     const handleCheckout = async () => {
         setLoading(true);
