@@ -87,7 +87,8 @@ const ProductDetail = () => {
       addedAt: new Date().toISOString(),
       is_reseller: false,
       weight: data.weight || 0,
-      id: data.id // Ensure ID is passed to cart for checkout
+      id: data.id || data._id,
+      _id: data._id || data.id
     };
 
     addToCart(itemToAdd);

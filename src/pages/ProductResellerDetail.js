@@ -128,7 +128,8 @@ const ProductResellerDetail = () => {
             weight: data.weight || 0,
             tier_pricing: data.tier_pricing,
             base_price: data.price,
-            _id: data._id || data.id // Ensure ID is passed to cart for checkout
+            id: data.id || data._id,
+            _id: data._id || data.id
         };
 
         addToCart(itemToAdd);

@@ -349,13 +349,20 @@ const ProfilePage = () => {
         // 1. Calculate Total Weight (grams)
         const weight = cart.reduce((acc, item) => {
             if (item.selected !== false) {
-                // Try to find weight from product state if not in cart item
+                // Try to find weight from item properties first, then from context
                 let itemWeight = item.weight || 0;
                 if (!itemWeight) {
-                    const p = item.is_reseller ? productReseller.find(pr => pr.id === item.id) : product.find(pr => pr.id === item.id);
+                    // Match by id or _id
+                    const p = item.is_reseller
+                        ? productReseller.find(pr => (pr.id === item.id || pr._id === item.id))
+                        : product.find(pr => (pr.id === item.id || pr._id === item.id));
                     itemWeight = p?.weight || 0;
                 }
-                return acc + (itemWeight * item.quantity);
+
+                // Reseller products have a base unit of 10. 
+                // We assume the entered weight is for the minimum bundle (10 pcs).
+                const multiplier = item.is_reseller ? (item.quantity / 10) : item.quantity;
+                return acc + (itemWeight * multiplier);
             }
             return acc;
         }, 0);
