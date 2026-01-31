@@ -119,6 +119,27 @@ const ProfilePage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const sidebarRef = useRef(null);
 
+    // Shipping States
+    const [selectedCourier, setSelectedCourier] = useState(null);
+    const [shippingCost, setShippingCost] = useState(0);
+    const [totalWeight, setTotalWeight] = useState(0);
+    const [distance, setDistance] = useState(0);
+
+    // Helper: Haversine Distance
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return parseFloat((R * c).toFixed(2));
+    };
+
+    // Seller Coordinates (Example: Jakarta/Store Location)
+    const SELLER_COORDS = { lat: -6.2088, lon: 106.8456 }; // Jakarta Central
+
     // Auto-close sidebar on mobile when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -284,13 +305,14 @@ const ProfilePage = () => {
     // Transaction Delivery Address State
     const [deliveryAddress, setDeliveryAddress] = useState("");
 
-    // Construct full address when dependencies change
+    // Construct full address and Calculate Distance/Weight
     useEffect(() => {
         if (activeTab === "carts") {
             const provinceName = provinces.find(p => p.id === formData.provinceId)?.name || "";
             const regencyName = regencies.find(r => r.id === formData.regencyId)?.name || "";
             const districtName = districts.find(d => d.id === formData.districtId)?.name || "";
-            const villageName = villages.find(v => v.id === formData.villageId)?.name || "";
+            const selectedVillage = villages.find(v => v.id === formData.villageId);
+            const villageName = selectedVillage?.name || "";
 
             // Start with base address
             const parts = [formData.address];
@@ -310,8 +332,59 @@ const ProfilePage = () => {
             if (fullAddress) {
                 setDeliveryAddress(fullAddress);
             }
+
+            // Calculate Distance if Village coordinates are available
+            if (selectedVillage && selectedVillage.meta) {
+                const meta = typeof selectedVillage.meta === 'string' ? JSON.parse(selectedVillage.meta) : selectedVillage.meta;
+                if (meta.lat && meta.long) {
+                    const dist = calculateDistance(SELLER_COORDS.lat, SELLER_COORDS.lon, parseFloat(meta.lat), parseFloat(meta.long));
+                    setDistance(dist);
+                }
+            }
         }
     }, [activeTab, formData, provinces, regencies, districts, villages]);
+
+    // Calculate Total Weight and Shipping Cost
+    useEffect(() => {
+        // 1. Calculate Total Weight (grams)
+        const weight = cart.reduce((acc, item) => {
+            if (item.selected !== false) {
+                // Try to find weight from product state if not in cart item
+                let itemWeight = item.weight || 0;
+                if (!itemWeight) {
+                    const p = item.is_reseller ? productReseller.find(pr => pr.id === item.id) : product.find(pr => pr.id === item.id);
+                    itemWeight = p?.weight || 0;
+                }
+                return acc + (itemWeight * item.quantity);
+            }
+            return acc;
+        }, 0);
+        setTotalWeight(weight);
+
+        // 2. Calculate Shipping Cost based on Courier
+        if (selectedCourier && distance > 0) {
+            const weightKg = Math.ceil(weight / 1000) || 1; // Round up to nearest kg
+            let cost = 0;
+
+            if (selectedCourier === "TIKI") {
+                cost = (distance * 1000) + (weightKg * 5000);
+                if (cost < 10000) cost = 10000;
+            } else if (selectedCourier === "J&T") {
+                cost = (distance * 1200) + (weightKg * 4000);
+                if (cost < 12000) cost = 12000;
+            } else if (selectedCourier === "Grab/GoSend") {
+                cost = distance * 5000;
+                if (cost < 15000) cost = 15000;
+                if (weightKg > 20) cost += (weightKg - 20) * 2000; // Extra for heavy items
+            } else if (selectedCourier === "Lalamove") {
+                cost = 20000 + (distance * 4000); // Higher base
+            }
+
+            setShippingCost(Math.round(cost));
+        } else {
+            setShippingCost(0);
+        }
+    }, [cart, selectedCourier, distance, product, productReseller]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -420,9 +493,16 @@ const ProfilePage = () => {
             return;
         }
 
-        // 3. Validate Stock Availability (Real-time check against Context)
+        // 3. Validate Courier Selection
+        if (distance > 0 && !selectedCourier) {
+            setMessage({ type: "danger", text: "Silakan pilih kurir pengiriman terlebih dahulu." });
+            setLoading(false);
+            return;
+        }
+
+        // 4. Validate Stock Availability (Real-time check against Context)
         for (const item of selectedItems) {
-            // Find current product state
+            // ... (stock validation logic remains same)
             let currentStock = 0;
             const foundProduct = product.find(p => p.id === item.id);
             const foundReseller = productReseller.find(p => p.id === item.id);
@@ -432,7 +512,6 @@ const ProfilePage = () => {
             } else if (foundReseller) {
                 currentStock = foundReseller.stock;
             } else {
-                // Skip check if product not found (shouldn't happen with patched logic, but safe fallback)
                 continue;
             }
 
@@ -444,7 +523,7 @@ const ProfilePage = () => {
             }
         }
 
-        // 4. Calculate Total
+        // 5. Calculate Totals
         const calculateItemPrice = (item) => {
             if (item.tier_pricing && item.tier_pricing.length > 0) {
                 const qty = item.quantity;
@@ -461,9 +540,10 @@ const ProfilePage = () => {
             return item.price;
         };
 
-        const totalAmount = selectedItems.reduce((acc, item) => acc + (calculateItemPrice(item) * item.quantity), 0);
+        const subtotal = selectedItems.reduce((acc, item) => acc + (calculateItemPrice(item) * item.quantity), 0);
+        const finalTotal = subtotal + shippingCost;
 
-        // 4. Construct Payload
+        // 6. Construct Payload
         const payload = {
             buyer_id: user.id,
             buyer_info: {
@@ -474,28 +554,31 @@ const ProfilePage = () => {
             products: selectedItems.map(item => {
                 const effectivePrice = calculateItemPrice(item);
                 return {
-                    product_id: item.id, // assuming item has id from product
+                    product_id: item.id,
                     name: item.name,
                     image_url: item.image_url,
-                    type: item.type, // category/variant
+                    type: item.type,
                     price: effectivePrice,
                     quantity: item.quantity,
-                    discount_percentage: item.discount_percentage || 0,
-                    discount_duration: item.discount_duration || 0,
-                    discount_end_date: item.discount_end_date || null,
                     is_reseller: item.is_reseller || false
                 };
             }),
-            total_amount: totalAmount
+            total_amount: subtotal,
+            shipping_cost: shippingCost,
+            courier_name: selectedCourier,
+            total_weight: totalWeight,
+            distance: distance
         };
 
         try {
-            // 5. Send to Backend
+            // 7. Send to Backend
             const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/transactions`, payload);
 
             if (res.data.success) {
                 const transactionId = res.data.data.id;
-                const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalAmount);
+                const formattedSubtotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(subtotal);
+                const formattedShipping = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(shippingCost);
+                const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(finalTotal);
 
                 // Format Product List for WhatsApp
                 const productList = selectedItems.map(item => `- ${item.name} (x${item.quantity})`).join('%0A');
@@ -504,14 +587,18 @@ const ProfilePage = () => {
                 const buyerPhone = user.phone || formData.phone;
 
                 // Construct WhatsApp Message
-                const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ATotal: ${formattedTotal} (Belum termasuk Biaya Pengiriman)%0A%0AMohon diproses, terima kasih.`;
+                const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ASubtotal: ${formattedSubtotal}%0AOngkos Kirim (${selectedCourier}): ${formattedShipping}%0ATotal Pembayaran: ${formattedTotal}%0A%0AMohon diproses, terima kasih.`;
                 const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
                 // Open WhatsApp in new tab
                 window.open(waUrl, '_blank');
 
-                // 6. Clear only selected items from Cart
+                // 8. Clear only selected items from Cart
                 clearSelectedFromCart();
+
+                // Reset shipping state
+                setSelectedCourier(null);
+                setShippingCost(0);
 
                 handleTabChange("transactions");
                 // Trigger fetch immediately
@@ -1481,11 +1568,47 @@ const ProfilePage = () => {
                                                                     </small>
                                                                 </div>
 
+                                                                {/* SHIPPING SECTION */}
+                                                                <div className="mb-3 pb-3 border-bottom">
+                                                                    <label className="fw-bold text-dark mb-2">Pilih Kurir Pengiriman</label>
+                                                                    <div className="row g-2">
+                                                                        {['TIKI', 'J&T', 'Grab/GoSend', 'Lalamove'].map(courier => (
+                                                                            <div className="col-6" key={courier}>
+                                                                                <button
+                                                                                    className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'}`}
+                                                                                    onClick={() => setSelectedCourier(courier)}
+                                                                                    style={{ fontSize: '0.75rem' }}
+                                                                                >
+                                                                                    {courier}
+                                                                                </button>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+
+                                                                    {distance > 0 && (
+                                                                        <div className="mt-2 d-flex justify-content-between align-items-center">
+                                                                            <small className="text-muted">
+                                                                                <i className="bi bi-geo-alt-fill me-1"></i> {distance} km
+                                                                            </small>
+                                                                            <small className="text-muted">
+                                                                                <i className="bi bi-box-seam-fill me-1"></i> {totalWeight < 1000 ? `${totalWeight} g` : `${(totalWeight / 1000).toFixed(2)} kg`}
+                                                                            </small>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                                                                    <span className="fw-bold text-dark">Ongkos Kirim</span>
+                                                                    <span className="text-primary fw-bold">
+                                                                        {shippingCost > 0 ? `Rp${shippingCost.toLocaleString("id-ID")}` : '-'}
+                                                                    </span>
+                                                                </div>
+
                                                                 <div className="d-flex justify-content-between mb-2">
-                                                                    <span className="fw-bold text-dark fs-5">Total</span>
+                                                                    <span className="fw-bold text-dark fs-5">Total Pembayaran</span>
                                                                     <div className="text-end">
                                                                         <span className="fw-bold text-primary fs-5 d-block">
-                                                                            Rp{cart.reduce((acc, item) => {
+                                                                            Rp{(cart.reduce((acc, item) => {
                                                                                 if (item.selected !== false) {
                                                                                     let effectivePrice = item.price;
                                                                                     if (item.tier_pricing && item.tier_pricing.length > 0) {
@@ -1501,7 +1624,7 @@ const ProfilePage = () => {
                                                                                     return acc + (effectivePrice * item.quantity);
                                                                                 }
                                                                                 return acc;
-                                                                            }, 0).toLocaleString("id-ID")}
+                                                                            }, 0) + shippingCost).toLocaleString("id-ID")}
                                                                         </span>
                                                                         <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
                                                                             (Belum termasuk Biaya Pengiriman)
@@ -1709,11 +1832,23 @@ const ProfilePage = () => {
 
                                                                 {/* Total Payment */}
                                                                 <div className="text-center text-md-end">
+                                                                    {trx.shipping_cost > 0 && (
+                                                                        <div className="mb-2">
+                                                                            <p className="small text-muted mb-0">
+                                                                                Ongkir ({trx.courier_name}):
+                                                                                <span className="ms-1 fw-bold text-dark">Rp{Number(trx.shipping_cost).toLocaleString('id-ID')}</span>
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
                                                                     <p className="small text-muted mb-1">Total Pembayaran</p>
-                                                                    <h4 className="fw-bold text-primary mb-0">Rp{Number(trx.total_amount).toLocaleString('id-ID')}</h4>
-                                                                    <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
-                                                                        (Belum termasuk Biaya Pengiriman)
-                                                                    </small>
+                                                                    <h4 className="fw-bold text-primary mb-0">
+                                                                        Rp{Number(trx.total_payment || trx.total_amount).toLocaleString('id-ID')}
+                                                                    </h4>
+                                                                    {(!trx.total_payment || trx.shipping_cost === 0) && (
+                                                                        <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
+                                                                            (Belum termasuk Biaya Pengiriman)
+                                                                        </small>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         </div>

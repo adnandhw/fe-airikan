@@ -86,6 +86,7 @@ const ProductDetail = () => {
       discount_end_date: isDiscountActive ? data.discount_end_date : null,
       addedAt: new Date().toISOString(),
       is_reseller: false,
+      weight: data.weight || 0,
       id: data.id // Ensure ID is passed to cart for checkout
     };
 
@@ -135,116 +136,9 @@ const ProductDetail = () => {
     }
   };
 
-  // Helper to fetch region name
-  const fetchRegionName = async (url) => {
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
-      return data.name;
-    } catch (error) {
-      return "";
-    }
-  };
 
-  const handleBuyNow = async () => {
-    if (!user) {
-      setLoginMessage("Silakan login terlebih dahulu untuk melanjutkan pembayaran.");
-      setShowLoginRequired(true);
-      window.scrollTo(0, 0);
-      return;
-    }
 
-    // Validate Address (Simple check)
-    if (!user.address) {
-      setErrorMsg("Mohon lengkapi alamat di Profil Anda terlebih dahulu.");
-      window.scrollTo(0, 0);
-      return;
-    }
 
-    setErrorMsg("");
-
-    // Check Stock
-    if (data.stock !== undefined && quantity > data.stock) {
-      setErrorMsg(`Stok tidak mencukupi (Tersedia: ${data.stock})`);
-      window.scrollTo(0, 0);
-      return;
-    }
-
-    // Construct Full Address (Fetch names if IDs exist)
-    let fullAddress = user.address;
-    try {
-      const provinceName = user.provinceId ? await fetchRegionName(`https://www.emsifa.com/api-wilayah-indonesia/api/province/${user.provinceId}.json`) : "";
-      const regencyName = user.regencyId ? await fetchRegionName(`https://www.emsifa.com/api-wilayah-indonesia/api/regency/${user.regencyId}.json`) : "";
-      const districtName = user.districtId ? await fetchRegionName(`https://www.emsifa.com/api-wilayah-indonesia/api/district/${user.districtId}.json`) : "";
-      const villageName = user.villageId ? await fetchRegionName(`https://www.emsifa.com/api-wilayah-indonesia/api/village/${user.villageId}.json`) : "";
-
-      const parts = [user.address];
-      if (villageName) parts.push(villageName);
-      if (districtName) parts.push(districtName);
-      if (regencyName) parts.push(regencyName);
-      if (provinceName) parts.push(provinceName);
-      if (user.postalCode) parts.push(user.postalCode);
-
-      fullAddress = parts.filter(p => p && p.trim() !== "").join(", ");
-    } catch (e) {
-      console.error("Address construction error", e);
-      // Fallback to basic address if fetch fails
-    }
-
-    const effectivePrice = isDiscountActive ? discountedPrice : data.price;
-    const totalPrice = effectivePrice * quantity;
-    const buyerName = `${user.firstName} ${user.lastName}`;
-    const buyerPhone = user.phone;
-    const buyerAddress = fullAddress; // Use constructed full address
-
-    // Construct Payload
-    const payload = {
-      buyer_id: user.id,
-      buyer_info: {
-        name: buyerName,
-        phone: buyerPhone,
-        address: buyerAddress
-      },
-      products: [{
-        product_id: data.id,
-        name: data.name,
-        image_url: data.image_url,
-        type: data.type,
-        price: effectivePrice,
-        quantity: quantity,
-        discount_percentage: isDiscountActive ? data.discount_percentage : 0,
-        discount_duration: isDiscountActive ? data.discount_duration : 0,
-        discount_end_date: isDiscountActive ? data.discount_end_date : null
-      }],
-      total_amount: totalPrice
-    };
-
-    try {
-      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/transactions`, payload);
-
-      if (res.data.success) {
-        const transactionId = res.data.data.id;
-        const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalPrice);
-        const formattedPrice = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(effectivePrice);
-
-        // Construct WhatsApp Message
-        const productList = `- ${data.name} (x${quantity}) @ ${formattedPrice}`;
-        const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${buyerAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ATotal: ${formattedTotal} (Belum termasuk Biaya Pengiriman)%0A%0AMohon diproses, terima kasih.`;
-        const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
-
-        // Open WhatsApp
-        window.open(waUrl, '_blank');
-
-        // Redirect to Transactions
-        const userSlug = user.username || user.firstName?.toLowerCase() || "user";
-        navigate(`/profile/${userSlug}/transactions`);
-      }
-    } catch (error) {
-      console.error("Buy Now Error:", error);
-      setErrorMsg("Gagal memproses pesanan. Silakan coba lagi.");
-      window.scrollTo(0, 0);
-    }
-  };
 
   const renderDescription = (text) => {
     if (!text) return null;
@@ -482,14 +376,7 @@ const ProductDetail = () => {
                       Tambah Keranjang
                     </button>
 
-                    <button
-                      onClick={handleBuyNow}
-                      className="secondaryBtn justify-content-center"
-                      disabled={data.stock !== undefined && data.stock === 0}
-                      style={{ opacity: (data.stock !== undefined && data.stock === 0) ? 0.6 : 1, height: '38px', fontSize: '0.9rem' }}
-                    >
-                      Beli Sekarang
-                    </button>
+
                   </div>
                 </div>
 
