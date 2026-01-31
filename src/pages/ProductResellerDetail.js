@@ -193,7 +193,7 @@ const ProductResellerDetail = () => {
         }
 
         return (
-            <div className="description-box" style={{ borderLeft: 'none' }}>
+            <div className="description-box">
                 {mainDesc && <p className="description-text mb-0">{mainDesc.trim()}</p>}
 
                 {advantages && (
