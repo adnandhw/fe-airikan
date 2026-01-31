@@ -5,6 +5,7 @@ import { Context } from "../MyContext";
 
 import AddToCartSuccessModal from "../components/AddToCartSuccessModal";
 import LoginRequiredModal from "../components/LoginRequiredModal";
+import DOAModal from "../components/DOAModal";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -16,6 +17,7 @@ const ProductDetail = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showLoginRequired, setShowLoginRequired] = useState(false);
   const [loginMessage, setLoginMessage] = useState("");
+  const [showDOAModal, setShowDOAModal] = useState(false);
 
   // MongoDB pakai _id tapi API pakai id
   const data = product.find((p) => p.id === id);
@@ -213,6 +215,11 @@ const ProductDetail = () => {
           message={loginMessage}
         />
 
+        <DOAModal
+          show={showDOAModal}
+          onClose={() => setShowDOAModal(false)}
+        />
+
         <div className="row g-5">
 
           {/* 🔹 IMAGE */}
@@ -321,7 +328,7 @@ const ProductDetail = () => {
                           value={data.stock === 0 ? 0 : quantity}
                           onChange={handleQuantityChange}
                           onBlur={handleBlur}
-                          style={{ backgroundColor: 'white', fontWeight: '500', width: "55px", padding: 0, fontSize: '1rem' }}
+                          style={{ backgroundColor: 'var(--bg-surface)', fontWeight: '500', width: "55px", padding: 0, fontSize: '1rem' }}
                           disabled={data.stock !== undefined && data.stock === 0}
                         />
                         <button
@@ -354,6 +361,14 @@ const ProductDetail = () => {
 
                   {/* TOTAL ESTIMASI (Right) */}
                   <div className="d-flex flex-column align-items-start align-items-md-end w-100 w-md-auto">
+                    <div
+                      className="text-primary small mb-1 cursor-pointer hover-underline"
+                      style={{ fontSize: '0.8rem', cursor: 'pointer', fontWeight: '500' }}
+                      onClick={() => setShowDOAModal(true)}
+                    >
+                      <i className="bi bi-shield-check me-1"></i>
+                      Garansi DOA (Death On Arrival)
+                    </div>
                     <span className="text-secondary small mb-1" style={{ fontSize: '0.9rem' }}>Total Estimasi</span>
                     <h4 className="text-success fw-bold m-0" style={{ fontSize: '1.25rem' }}>
                       Rp {Number((isDiscountActive ? discountedPrice : data.price) * (Number(quantity) || 0)).toLocaleString("id-ID")}
