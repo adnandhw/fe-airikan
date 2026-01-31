@@ -371,9 +371,10 @@ const ProductResellerDetail = () => {
                                                     <i className="bi bi-plus"></i>
                                                 </button>
                                             </div>
-                                            <div className="w-100 w-sm-auto">
+                                            <div className="flex-grow-1">
                                                 {quantity >= effectiveStock && effectiveStock > 0 && (
-                                                    <small className="text-danger" style={{ fontSize: '0.7rem' }}>
+                                                    <small className="text-danger fw-medium d-block" style={{ fontSize: '0.75rem', lineHeight: '1.2' }}>
+                                                        <i className="bi bi-exclamation-circle me-1"></i>
                                                         Maksimal stok tercapai ({effectiveStock} pcs)
                                                     </small>
                                                 )}
