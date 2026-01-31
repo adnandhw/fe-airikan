@@ -350,7 +350,7 @@ const ProductResellerDetail = () => {
                                                 {effectiveStock === 0 ? "Stok Habis" : `Tersedia: ${effectiveStock}`}
                                             </span>
                                         </div>
-                                        <div className="d-flex flex-wrap align-items-center gap-2">
+                                        <div className="d-flex align-items-center gap-3">
                                             <div className="input-group input-group-sm" style={{ width: "120px", borderRadius: "6px", overflow: "hidden", border: "1px solid #ced4da" }}>
                                                 <button
                                                     className="btn btn-light bg-white border-0"
@@ -378,10 +378,10 @@ const ProductResellerDetail = () => {
                                                     <i className="bi bi-plus"></i>
                                                 </button>
                                             </div>
-                                            <div className="flex-grow-1">
+                                            <div>
                                                 {quantity >= effectiveStock && effectiveStock > 0 && (
-                                                    <small className="text-danger fw-medium d-block" style={{ fontSize: '0.75rem', lineHeight: '1.2' }}>
-                                                        <i className="bi bi-exclamation-circle me-1"></i>
+                                                    <small className="text-danger fw-bold d-block animate-pulse" style={{ fontSize: '0.75rem', lineHeight: '1.2' }}>
+                                                        <i className="bi bi-exclamation-triangle-fill me-1"></i>
                                                         Maksimal stok tercapai ({effectiveStock} pcs)
                                                     </small>
                                                 )}
