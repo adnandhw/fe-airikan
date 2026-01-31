@@ -266,7 +266,7 @@ const ProductResellerDetail = () => {
                     {/* 🔹 INFO */}
                     <div className="col-md-6">
 
-                        <div className="purchase-card p-3 d-flex flex-column" style={{ minHeight: '400px' }}>
+                        <div className="purchase-card p-3 d-flex flex-column" style={{ height: '500px' }}>
 
                             {/* HEADER SECTION: Title, Type, Price */}
                             <div className="mb-2 border-bottom pb-2">
@@ -345,8 +345,8 @@ const ProductResellerDetail = () => {
                                     {/* QUANTITY CONTROL (Left) */}
                                     <div className="w-100 w-md-auto">
                                         <div className="d-flex flex-column align-items-start gap-1 mb-2">
-                                            <span className="fw-semibold text-secondary small text-uppercase ls-1 d-block mb-1" style={{ fontSize: '0.75rem' }}>Jumlah Pembelian</span>
-                                            <span className={effectiveStock === 0 ? "text-danger fw-medium" : "text-muted fw-medium"} style={{ fontSize: '0.8rem' }}>
+                                            <span className="text-secondary small text-uppercase ls-1 d-block mb-1" style={{ fontSize: '0.7rem' }}>Jumlah Pembelian</span>
+                                            <span className={effectiveStock === 0 ? "text-danger" : "text-muted"} style={{ fontSize: '0.75rem' }}>
                                                 {effectiveStock === 0 ? "Stok Habis" : `Tersedia: ${effectiveStock}`}
                                             </span>
                                         </div>
@@ -366,7 +366,7 @@ const ProductResellerDetail = () => {
                                                     className="form-control text-center border-0 bg-white"
                                                     value={effectiveStock === 0 ? 0 : quantity}
                                                     readOnly
-                                                    style={{ backgroundColor: 'var(--bg-surface)', cursor: 'default', fontWeight: '600', padding: 0, fontSize: '0.9rem' }}
+                                                    style={{ backgroundColor: 'var(--bg-surface)', cursor: 'default', fontWeight: '500', padding: 0, fontSize: '0.85rem' }}
                                                 />
                                                 <button
                                                     className="btn btn-light bg-white border-0"
@@ -380,7 +380,7 @@ const ProductResellerDetail = () => {
                                             </div>
                                             <div>
                                                 {quantity >= effectiveStock && effectiveStock > 0 && (
-                                                    <small className="text-danger fw-bold d-block animate-pulse" style={{ fontSize: '0.75rem', lineHeight: '1.2' }}>
+                                                    <small className="text-danger d-block animate-pulse" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>
                                                         <i className="bi bi-exclamation-triangle-fill me-1"></i>
                                                         Maksimal stok tercapai ({effectiveStock} pcs)
                                                     </small>
@@ -399,11 +399,11 @@ const ProductResellerDetail = () => {
                                             <i className="bi bi-shield-check me-1"></i>
                                             Garansi DOA (Death On Arrival)
                                         </div>
-                                        <span className="text-secondary small mb-1" style={{ fontSize: '0.8rem' }}>Total Estimasi</span>
-                                        <h4 className="text-success fw-bold m-0" style={{ fontSize: '1.1rem' }}>
+                                        <span className="text-secondary small mb-1" style={{ fontSize: '0.75rem' }}>Total Estimasi</span>
+                                        <h4 className="text-success fw-semibold m-0" style={{ fontSize: '1rem' }}>
                                             Rp {Number(effectivePrice * (Number(quantity) || 0)).toLocaleString("id-ID")}
                                         </h4>
-                                        <small className="text-muted fst-italic" style={{ fontSize: '0.7rem' }}>
+                                        <small className="text-muted fst-italic" style={{ fontSize: '0.65rem' }}>
                                             (Belum termasuk Biaya Pengiriman)
                                         </small>
                                     </div>
