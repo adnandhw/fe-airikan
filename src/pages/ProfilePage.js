@@ -1473,11 +1473,11 @@ const ProfilePage = () => {
                                                                                             </h6>
                                                                                             <small className="text-muted d-block mb-1" style={{ fontSize: '0.8rem' }}>{item.type}</small>
                                                                                             <div className="mb-2">
-                                                                                                <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
+                                                                                                <span className="badge bg-light text-muted border py-1 px-2" style={{ fontSize: '0.75rem', fontWeight: '500' }}>
                                                                                                     <i className="bi bi-box-seam me-1"></i>
                                                                                                     {isReseller
-                                                                                                        ? `${foundReseller?.weight || 0} g / 10 pcs`
-                                                                                                        : `${foundProduct?.weight || 0} g`
+                                                                                                        ? `${item.weight || foundReseller?.weight || 0} g / 10 pcs`
+                                                                                                        : `${item.weight || foundProduct?.weight || 0} g`
                                                                                                     }
                                                                                                 </span>
                                                                                             </div>
@@ -1838,7 +1838,11 @@ const ProfilePage = () => {
                                                                                             <small className="text-muted d-block mb-1">{item.type}</small>
                                                                                             <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
                                                                                                 <i className="bi bi-box-seam me-1"></i>
-                                                                                                {item.weight ? `${item.weight} g` : '-'}
+                                                                                                {item.weight ? (
+                                                                                                    item.is_reseller || (item.name && item.name.toLowerCase().includes("[reseller]"))
+                                                                                                        ? `${item.weight} g / 10 pcs`
+                                                                                                        : `${item.weight} g`
+                                                                                                ) : '-'}
                                                                                             </span>
                                                                                             {item.discount_percentage > 0 && (
                                                                                                 <div className="mt-1">
@@ -1894,7 +1898,11 @@ const ProfilePage = () => {
                                                                             <small className="text-muted d-block mb-1" style={{ fontSize: '0.8rem' }}>{item.type}</small>
                                                                             <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
                                                                                 <i className="bi bi-box-seam me-1"></i>
-                                                                                {item.weight ? `${item.weight} g` : '-'}
+                                                                                {item.weight ? (
+                                                                                    item.is_reseller || (item.name && item.name.toLowerCase().includes("[reseller]"))
+                                                                                        ? `${item.weight} g / 10 pcs`
+                                                                                        : `${item.weight} g`
+                                                                                ) : '-'}
                                                                             </span>
 
                                                                             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end mt-2 gap-1">

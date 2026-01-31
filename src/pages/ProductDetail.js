@@ -264,6 +264,13 @@ const ProductDetail = () => {
                     <span className="spec-label">Ukuran:</span>
                     <strong>{data.size}</strong>
                   </div>
+
+                  {data.weight > 0 && (
+                    <div className="spec-badge mb-0" style={{ padding: '3px 10px', fontSize: '0.9rem' }}>
+                      <span className="spec-label">Berat:</span>
+                      <strong>{data.weight} g</strong>
+                    </div>
+                  )}
                 </div>
 
                 <div className={isDiscountActive ? "mt-0 mb-0" : "my-2"}>
