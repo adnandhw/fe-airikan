@@ -4,6 +4,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
 import OrderSuccessModal from "../components/OrderSuccessModal";
+import DOAModal from "../components/DOAModal";
 
 // Map URL friendly slug to internal state
 const tabMapping = {
@@ -64,6 +65,7 @@ const ProfilePage = () => {
     // State for Payment Success Modal
     const [successWaUrl, setSuccessWaUrl] = useState("");
     const [orderWaUrl, setOrderWaUrl] = useState("");
+    const [showDOAModal, setShowDOAModal] = useState(false);
 
     // Toast State for Auto-Dismiss Alerts
     const [toast, setToast] = useState(null);
@@ -1627,6 +1629,24 @@ const ProfilePage = () => {
                                                                     </small>
                                                                 </div>
 
+                                                                {/* DOA GUARANTEE BANNER */}
+                                                                <div
+                                                                    className="mb-3 p-3 rounded-3 border border-primary-subtle bg-primary-subtle bg-opacity-10 cursor-pointer transition-all hover-shadow-sm"
+                                                                    onClick={() => setShowDOAModal(true)}
+                                                                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                                                                >
+                                                                    <div className="d-flex align-items-center gap-3">
+                                                                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '36px', height: '36px' }}>
+                                                                            <i className="bi bi-shield-check"></i>
+                                                                        </div>
+                                                                        <div className="flex-grow-1">
+                                                                            <h6 className="mb-0 fw-bold text-primary" style={{ fontSize: '0.9rem' }}>Garansi DOA (Death On Arrival)</h6>
+                                                                            <p className="mb-0 text-muted" style={{ fontSize: '0.75rem' }}>Klik untuk melihat ketentuan garansi ikan mati.</p>
+                                                                        </div>
+                                                                        <i className="bi bi-chevron-right text-primary"></i>
+                                                                    </div>
+                                                                </div>
+
                                                                 {/* SHIPPING SECTION */}
                                                                 <div className="mb-3 pb-3 border-bottom" id="courier-section">
                                                                     {message.text && message.text.includes("kurir") && (
@@ -2000,6 +2020,11 @@ const ProfilePage = () => {
                     show={showOrderSuccess}
                     waUrl={orderWaUrl}
                     onClose={() => setShowOrderSuccess(false)}
+                />
+
+                <DOAModal
+                    show={showDOAModal}
+                    onClose={() => setShowDOAModal(false)}
                 />
 
                 {/* Toast Notification Overlay */}
