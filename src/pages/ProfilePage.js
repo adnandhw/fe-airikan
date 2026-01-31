@@ -442,6 +442,13 @@ const ProfilePage = () => {
         }
     }, [activeTab, user, fetchTransactions]);
 
+    // Clear courier error message when a courier is selected
+    useEffect(() => {
+        if (selectedCourier && message.text && message.text.includes("kurir")) {
+            setMessage({ type: "", text: "" });
+        }
+    }, [selectedCourier]);
+
     const handleCheckout = async () => {
         setLoading(true);
         setMessage({ type: "", text: "" });
@@ -1580,6 +1587,12 @@ const ProfilePage = () => {
 
                                                                 {/* SHIPPING SECTION */}
                                                                 <div className="mb-3 pb-3 border-bottom" id="courier-section">
+                                                                    {message.text && message.text.includes("kurir") && (
+                                                                        <div className={`alert alert-${message.type} py-2 mb-3`} style={{ fontSize: '0.85rem' }}>
+                                                                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                                                                            {message.text}
+                                                                        </div>
+                                                                    )}
                                                                     <label className="fw-bold text-dark mb-2">Pilih Kurir Pengiriman</label>
                                                                     <div className="row g-2">
                                                                         {['TIKI', 'J&T', 'Grab/GoSend', 'Lalamove'].map(courier => (
