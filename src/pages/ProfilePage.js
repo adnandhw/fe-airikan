@@ -1232,7 +1232,16 @@ const ProfilePage = () => {
                                                                                                     >
                                                                                                         {item.name.replace("[RESELLER]", "").trim()}
                                                                                                     </h6>
-                                                                                                    <small className="text-muted">{item.type}</small>
+                                                                                                    <small className="text-muted d-block mb-1">{item.type}</small>
+                                                                                                    <div className="mb-1">
+                                                                                                        <span className="badge bg-light text-muted border py-1 px-2" style={{ fontSize: '0.7rem', fontWeight: '500' }}>
+                                                                                                            <i className="bi bi-box-seam me-1"></i>
+                                                                                                            {isReseller
+                                                                                                                ? `${item.weight || foundReseller?.weight || 0} g / 10 pcs`
+                                                                                                                : `${item.weight || foundProduct?.weight || 0} g`
+                                                                                                            }
+                                                                                                        </span>
+                                                                                                    </div>
                                                                                                     {item.discount_percentage > 0 && (
                                                                                                         <div className="mt-1">
                                                                                                             <span className="badge bg-danger me-2">{item.discount_percentage}% OFF</span>

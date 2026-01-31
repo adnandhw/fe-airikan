@@ -60,8 +60,7 @@ const DOAModal = ({ show, onClose }) => {
                             <p className="text-muted small mb-2">Jika klaim disetujui, penjual akan memberikan:</p>
                             <ul className="text-muted small ps-3 mb-2">
                                 <li>Penggantian ikan pada pengiriman berikutnya, atau</li>
-                                <li>Refund sesuai kesepakatan (tidak termasuk ongkos kirim), atau</li>
-                                <li>Store credit / saldo toko</li>
+                                <li>Refund sesuai kesepakatan (tidak termasuk ongkos kirim)</li>
                             </ul>
                             <p className="text-muted small fst-italic mb-0">
                                 Bentuk kompensasi ditentukan berdasarkan kesepakatan kedua belah pihak.
