@@ -280,7 +280,7 @@ const ProductResellerDetail = () => {
                                     {data.weight > 0 && (
                                         <div className="spec-badge mb-0" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
                                             <span className="spec-label">Berat:</span>
-                                            <strong>{data.weight} g / pcs</strong>
+                                            <strong>{data.weight} g / 10 pcs</strong>
                                         </div>
                                     )}
                                 </div>
