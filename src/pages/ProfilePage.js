@@ -638,7 +638,7 @@ const ProfilePage = () => {
                 const buyerPhone = user.phone || formData.phone;
 
                 // Construct WhatsApp Message
-                const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ASubtotal: ${formattedSubtotal}%0AOngkos Kirim (${selectedCourier}): ${formattedShipping}%0ATotal Pembayaran: ${formattedTotal}%0A%0AMohon diproses, terima kasih.`;
+                const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ASubtotal: ${formattedSubtotal}%0ABiaya Pengiriman (${selectedCourier}): ${formattedShipping}%0ATotal Pembayaran: ${formattedTotal}%0A%0AMohon diproses, terima kasih.`;
                 const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
                 // Set WhatsApp URL and show success modal instead of opening immediately
@@ -1711,7 +1711,7 @@ const ProfilePage = () => {
                                                                 </div>
 
                                                                 <div className="d-flex justify-content-between mb-3 pb-3 border-bottom">
-                                                                    <span className="fw-bold text-dark">Ongkos Kirim</span>
+                                                                    <span className="fw-bold text-dark">Biaya Pengiriman</span>
                                                                     <span className="text-primary fw-bold">
                                                                         {shippingCost > 0 ? `Rp${shippingCost.toLocaleString("id-ID")}` : '-'}
                                                                     </span>
@@ -1985,7 +1985,7 @@ const ProfilePage = () => {
                                                                     {trx.shipping_cost > 0 && (
                                                                         <div className="mb-2">
                                                                             <p className="small text-muted mb-0">
-                                                                                Ongkir ({trx.courier_name}):
+                                                                                Biaya Pengiriman ({trx.courier_name}):
                                                                                 <span className="ms-1 fw-bold text-dark">Rp{Number(trx.shipping_cost).toLocaleString('id-ID')}</span>
                                                                             </p>
                                                                         </div>
