@@ -1467,7 +1467,16 @@ const ProfilePage = () => {
                                                                                             >
                                                                                                 {item.name.replace("[RESELLER]", "").trim()}
                                                                                             </h6>
-                                                                                            <small className="text-muted d-block mb-2" style={{ fontSize: '0.8rem' }}>{item.type}</small>
+                                                                                            <small className="text-muted d-block mb-1" style={{ fontSize: '0.8rem' }}>{item.type}</small>
+                                                                                            <div className="mb-2">
+                                                                                                <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
+                                                                                                    <i className="bi bi-box-seam me-1"></i>
+                                                                                                    {isReseller
+                                                                                                        ? `${foundReseller?.weight || 0} g / 10 pcs`
+                                                                                                        : `${foundProduct?.weight || 0} g`
+                                                                                                    }
+                                                                                                </span>
+                                                                                            </div>
 
                                                                                             {/* Pricing */}
                                                                                             <div className="mb-2">
@@ -1822,7 +1831,11 @@ const ProfilePage = () => {
                                                                                                 <span className="badge bg-primary mb-1" style={{ fontSize: "0.65rem", letterSpacing: "0.5px" }}>RESELLER PRODUCT</span>
                                                                                             )}
                                                                                             <p className="mb-0 fw-bold">{item.name.replace("[RESELLER]", "").trim()}</p>
-                                                                                            <small className="text-muted">{item.type}</small>
+                                                                                            <small className="text-muted d-block mb-1">{item.type}</small>
+                                                                                            <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
+                                                                                                <i className="bi bi-box-seam me-1"></i>
+                                                                                                {item.weight ? `${item.weight} g` : '-'}
+                                                                                            </span>
                                                                                             {item.discount_percentage > 0 && (
                                                                                                 <div className="mt-1">
                                                                                                     <span className="badge bg-danger me-2">{item.discount_percentage}% OFF</span>
@@ -1875,6 +1888,10 @@ const ProfilePage = () => {
                                                                             )}
                                                                             <h6 className="mb-0 fw-bold text-dark" style={{ fontSize: '0.9rem' }}>{item.name.replace("[RESELLER]", "").trim()}</h6>
                                                                             <small className="text-muted d-block mb-1" style={{ fontSize: '0.8rem' }}>{item.type}</small>
+                                                                            <span className="badge bg-light text-muted border small py-1" style={{ fontSize: '0.65rem', fontWeight: 'normal' }}>
+                                                                                <i className="bi bi-box-seam me-1"></i>
+                                                                                {item.weight ? `${item.weight} g` : '-'}
+                                                                            </span>
 
                                                                             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-end mt-2 gap-1">
                                                                                 <div style={{ fontSize: '0.85rem' }}>
