@@ -374,17 +374,21 @@ const ProfilePage = () => {
             let cost = 0;
 
             if (selectedCourier === "TIKI") {
-                cost = (distance * 1000) + (weightKg * 5000);
-                if (cost < 10000) cost = 10000;
+                // TIKI: Weight-based (Regular) - No distance multiplier
+                cost = weightKg * 18000;
+                if (cost < 18000) cost = 18000;
             } else if (selectedCourier === "J&T") {
-                cost = (distance * 1200) + (weightKg * 4000);
-                if (cost < 12000) cost = 12000;
+                // J&T: Weight-based (Regular) - No distance multiplier
+                cost = weightKg * 15000;
+                if (cost < 15000) cost = 15000;
             } else if (selectedCourier === "Grab/GoSend") {
+                // local: Distance-based
                 cost = distance * 5000;
                 if (cost < 15000) cost = 15000;
-                if (weightKg > 20) cost += (weightKg - 20) * 2000; // Extra for heavy items
+                if (weightKg > 20) cost += (weightKg - 20) * 2000;
             } else if (selectedCourier === "Lalamove") {
-                cost = 20000 + (distance * 4000); // Higher base
+                // local: Distance-based
+                cost = 20000 + (distance * 4000);
             }
 
             setShippingCost(Math.round(cost));
