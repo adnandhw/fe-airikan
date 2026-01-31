@@ -5,10 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8FAFC;
-  /* Light Blue-Grey Background */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-main);
+  /* Soft Grey Background */
 }
 
 /* Hide spin buttons for number inputs */
@@ -20,6 +18,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 code {
@@ -44,8 +43,8 @@ code {
   --text-light: #F9FAFB;
 
   /* Backgrounds */
-  --bg-surface: #FFFFFF;
-  --bg-main: #F8FAFC;
+  --bg-surface: #F9FAFB;
+  --bg-main: #F3F4F6;
 
   /* Shadows for Depth */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -57,4 +56,29 @@ code {
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-xl: 1.5rem;
+}
+
+/* OVERRIDE BOOTSTRAP WHITES */
+.bg-white {
+  background-color: var(--bg-surface) !important;
+}
+
+.bg-light {
+  background-color: var(--bg-main) !important;
+}
+
+.modal-content {
+  background-color: var(--bg-surface) !important;
+}
+
+.card {
+  background-color: var(--bg-surface) !important;
+}
+
+.table {
+  --bs-table-bg: var(--bg-surface);
+}
+
+.list-group-item {
+  background-color: var(--bg-surface) !important;
 }

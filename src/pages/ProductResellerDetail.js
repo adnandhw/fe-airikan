@@ -366,7 +366,7 @@ const ProductResellerDetail = () => {
                                                     className="form-control text-center border-0 bg-white"
                                                     value={effectiveStock === 0 ? 0 : quantity}
                                                     readOnly
-                                                    style={{ backgroundColor: 'white', cursor: 'default', fontWeight: '600', padding: 0, fontSize: '0.9rem' }}
+                                                    style={{ backgroundColor: 'var(--bg-surface)', cursor: 'default', fontWeight: '600', padding: 0, fontSize: '0.9rem' }}
                                                 />
                                                 <button
                                                     className="btn btn-light bg-white border-0"

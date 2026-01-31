@@ -36,7 +36,7 @@ body,
 
 .navbar {
   padding: 15px 0;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(249, 250, 251, 0.95);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -141,7 +141,7 @@ body,
 .secondaryBtn {
   padding: 0 24px;
   height: 42px;
-  background: white;
+  background: var(--bg-surface);
   border: 2px solid var(--primary-color);
   border-radius: var(--radius-md);
   color: var(--primary-color);
@@ -171,7 +171,7 @@ body,
 }
 
 .searchInput:focus {
-  background-color: white;
+  background-color: var(--bg-surface);
   border-color: var(--secondary-color);
   outline: none;
   box-shadow: 0 0 0 3px rgba(50, 130, 184, 0.1);
@@ -301,7 +301,7 @@ body,
 /* Product Specifics */
 /* ===== IMAGE DETAIL ===== */
 .detail-image-box {
-  background: #fff;
+  background: var(--bg-surface);
   border-radius: 12px;
   padding: 10px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
@@ -331,7 +331,7 @@ body,
 .product-img-wrapper {
   height: 220px;
   padding: 1.5rem;
-  background: white;
+  background: var(--bg-surface);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -475,7 +475,7 @@ body,
 
 /* PRODUCT DESCRIPTION STYLING */
 .description-box {
-  background-color: white;
+  background-color: var(--bg-surface);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
@@ -500,7 +500,7 @@ body,
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background-color: white;
+  background-color: var(--bg-surface);
   padding: 12px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
@@ -538,7 +538,7 @@ body,
 
 /* Purchase Card */
 .purchase-card {
-  background-color: white;
+  background-color: var(--bg-surface);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 1rem;
