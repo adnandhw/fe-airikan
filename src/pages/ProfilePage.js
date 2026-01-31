@@ -449,6 +449,16 @@ const ProfilePage = () => {
         }
     }, [selectedCourier]);
 
+    // Auto-clear all messages after 5 seconds
+    useEffect(() => {
+        if (message.text) {
+            const timer = setTimeout(() => {
+                setMessage({ type: "", text: "" });
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
+
     const handleCheckout = async () => {
         setLoading(true);
         setMessage({ type: "", text: "" });
