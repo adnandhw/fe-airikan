@@ -370,6 +370,18 @@ const ProfilePage = () => {
 
         // 2. Calculate Shipping Cost based on Courier
         if (selectedCourier && distance > 0) {
+            // Validation: Auto-reset courier if distance exceeds limits
+            if (selectedCourier === "Grab/GoSend" && distance > 40) {
+                setSelectedCourier('');
+                setShippingCost(0);
+                return;
+            }
+            if (selectedCourier === "Lalamove" && distance > 60) {
+                setSelectedCourier('');
+                setShippingCost(0);
+                return;
+            }
+
             const weightKg = Math.ceil(weight / 1000) || 1; // Round up to nearest kg
             let cost = 0;
 
@@ -1612,21 +1624,30 @@ const ProfilePage = () => {
                                                                     )}
                                                                     <label className="fw-bold text-dark mb-2">Pilih Kurir Pengiriman</label>
                                                                     <div className="row g-2">
-                                                                        {['TIKI', 'J&T', 'Grab/GoSend', 'Lalamove'].map(courier => (
-                                                                            <div className="col-6" key={courier}>
-                                                                                <button
-                                                                                    className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'}`}
-                                                                                    onClick={() => setSelectedCourier(courier)}
-                                                                                    style={{ fontSize: '0.75rem' }}
-                                                                                >
-                                                                                    {courier}
-                                                                                </button>
-                                                                            </div>
-                                                                        ))}
+                                                                        {['TIKI', 'J&T', 'Grab/GoSend', 'Lalamove'].map(courier => {
+                                                                            const isGrab = courier === 'Grab/GoSend';
+                                                                            const isLalamove = courier === 'Lalamove';
+                                                                            const isTooFar = (isGrab && distance > 40) || (isLalamove && distance > 60);
+
+                                                                            return (
+                                                                                <div className="col-6" key={courier}>
+                                                                                    <button
+                                                                                        className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'} ${isTooFar ? 'opacity-50 grayscale' : ''}`}
+                                                                                        onClick={() => !isTooFar && setSelectedCourier(courier)}
+                                                                                        disabled={isTooFar}
+                                                                                        style={{ fontSize: '0.75rem', filter: isTooFar ? 'grayscale(1)' : 'none' }}
+                                                                                        title={isTooFar ? `Maksimal jarak ${isGrab ? '40' : '60'}km` : ''}
+                                                                                    >
+                                                                                        {courier}
+                                                                                        {isTooFar && <div style={{ fontSize: '0.6rem', color: '#dc3545' }}>Jarak terlalu jauh</div>}
+                                                                                    </button>
+                                                                                </div>
+                                                                            );
+                                                                        })}
                                                                     </div>
 
-                                                                    {distance > 0 && (
-                                                                        <div className="mt-2 d-flex justify-content-between align-items-center">
+                                                                    <div className="mt-2 d-flex flex-column gap-1">
+                                                                        <div className="d-flex justify-content-between align-items-center">
                                                                             <small className="text-muted">
                                                                                 <i className="bi bi-geo-alt-fill me-1"></i> {distance} km
                                                                             </small>
@@ -1634,7 +1655,17 @@ const ProfilePage = () => {
                                                                                 <i className="bi bi-box-seam-fill me-1"></i> {totalWeight < 1000 ? `${totalWeight} g` : `${(totalWeight / 1000).toFixed(2)} kg`}
                                                                             </small>
                                                                         </div>
-                                                                    )}
+                                                                        {distance > 40 && (
+                                                                            <small className="text-danger" style={{ fontSize: '0.65rem' }}>
+                                                                                * Grab/GoSend hanya tersedia untuk jarak max 40km.
+                                                                            </small>
+                                                                        )}
+                                                                        {distance > 60 && (
+                                                                            <small className="text-danger" style={{ fontSize: '0.65rem' }}>
+                                                                                * Lalamove hanya tersedia untuk jarak max 60km.
+                                                                            </small>
+                                                                        )}
+                                                                    </div>
                                                                 </div>
 
                                                                 <div className="d-flex justify-content-between mb-3 pb-3 border-bottom">
