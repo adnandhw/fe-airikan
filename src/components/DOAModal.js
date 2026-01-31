@@ -7,7 +7,7 @@ const DOAModal = ({ show, onClose }) => {
         <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1060 }} tabIndex="-1">
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content border-0 shadow-lg">
-                    <div className="modal-header text-white border-0 py-3" style={{ backgroundColor: '#0d1b2a' }}>
+                    <div className="modal-header text-white border-0 py-3" style={{ background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)' }}>
                         <h5 className="modal-title fw-bold">
                             <i className="bi bi-shield-check me-2"></i>
                             Syarat dan Ketentuan Garansi DOA (Death On Arrival)
@@ -17,14 +17,14 @@ const DOAModal = ({ show, onClose }) => {
                     <div className="modal-body p-4 overflow-auto" style={{ maxHeight: '75vh' }}>
 
                         <section className="mb-4">
-                            <h6 className="fw-bold border-bottom pb-2" style={{ color: '#0d1b2a' }}>1. Pengertian Garansi DOA</h6>
+                            <h6 className="fw-bold border-bottom pb-2" style={{ color: 'var(--primary-color)' }}>1. Pengertian Garansi DOA</h6>
                             <p className="text-muted small mb-0">
                                 Garansi DOA (Death On Arrival) adalah jaminan dari penjual apabila produk (ikan hidup) diterima pembeli dalam kondisi mati saat paket pertama kali dibuka.
                             </p>
                         </section>
 
                         <section className="mb-4">
-                            <h6 className="fw-bold border-bottom pb-2" style={{ color: '#0d1b2a' }}>2. Ketentuan Klaim Garansi</h6>
+                            <h6 className="fw-bold border-bottom pb-2" style={{ color: 'var(--primary-color)' }}>2. Ketentuan Klaim Garansi</h6>
                             <p className="text-muted small mb-2">Garansi DOA hanya dapat diajukan apabila memenuhi seluruh syarat berikut:</p>
                             <ul className="text-muted small ps-3 mb-0">
                                 <li className="mb-2">
@@ -56,7 +56,7 @@ const DOAModal = ({ show, onClose }) => {
                         </section>
 
                         <section className="mb-4">
-                            <h6 className="fw-bold border-bottom pb-2" style={{ color: '#0d1b2a' }}>3. Bentuk Penggantian Garansi</h6>
+                            <h6 className="fw-bold border-bottom pb-2" style={{ color: 'var(--primary-color)' }}>3. Bentuk Penggantian Garansi</h6>
                             <p className="text-muted small mb-2">Jika klaim disetujui, penjual akan memberikan:</p>
                             <ul className="text-muted small ps-3 mb-2">
                                 <li>Penggantian ikan pada pengiriman berikutnya, atau</li>
@@ -94,7 +94,7 @@ const DOAModal = ({ show, onClose }) => {
                         </section>
 
                         <section className="mb-0">
-                            <h6 className="fw-bold border-bottom pb-2" style={{ color: '#0d1b2a' }}>5. Ketentuan Tambahan</h6>
+                            <h6 className="fw-bold border-bottom pb-2" style={{ color: 'var(--primary-color)' }}>5. Ketentuan Tambahan</h6>
                             <ul className="text-muted small ps-3 mb-0">
                                 <li className="mb-2">Garansi DOA hanya berlaku 1 kali klaim per transaksi.</li>
                                 <li className="mb-2">Penjual berhak menolak klaim apabila ditemukan indikasi kecurangan.</li>
@@ -103,7 +103,7 @@ const DOAModal = ({ show, onClose }) => {
                         </section>
                     </div>
                     <div className="modal-footer border-0 p-3 bg-light rounded-bottom">
-                        <button type="button" className="btn text-white w-100 py-2 fw-bold" onClick={onClose} style={{ backgroundColor: '#0d1b2a' }}>
+                        <button type="button" className="btn text-white w-100 py-2 fw-bold" onClick={onClose} style={{ background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%)' }}>
                             SAYA MENGERTI & SETUJU
                         </button>
                     </div>
