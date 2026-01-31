@@ -3,6 +3,7 @@ import { Context } from "../MyContext";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import axios from "axios";
 import PaymentSuccessModal from "../components/PaymentSuccessModal";
+import OrderSuccessModal from "../components/OrderSuccessModal";
 
 // Map URL friendly slug to internal state
 const tabMapping = {
@@ -59,8 +60,10 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState({ type: "", text: "" });
     const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+    const [showOrderSuccess, setShowOrderSuccess] = useState(false);
     // State for Payment Success Modal
     const [successWaUrl, setSuccessWaUrl] = useState("");
+    const [orderWaUrl, setOrderWaUrl] = useState("");
 
     // Toast State for Auto-Dismiss Alerts
     const [toast, setToast] = useState(null);
@@ -636,8 +639,9 @@ const ProfilePage = () => {
                 const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ASubtotal: ${formattedSubtotal}%0AOngkos Kirim (${selectedCourier}): ${formattedShipping}%0ATotal Pembayaran: ${formattedTotal}%0A%0AMohon diproses, terima kasih.`;
                 const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
 
-                // Open WhatsApp in new tab
-                window.open(waUrl, '_blank');
+                // Set WhatsApp URL and show success modal instead of opening immediately
+                setOrderWaUrl(waUrl);
+                setShowOrderSuccess(true);
 
                 // 8. Clear only selected items from Cart
                 clearSelectedFromCart();
@@ -1982,6 +1986,12 @@ const ProfilePage = () => {
                     show={showPaymentSuccess}
                     waUrl={successWaUrl}
                     onClose={() => setShowPaymentSuccess(false)}
+                />
+
+                <OrderSuccessModal
+                    show={showOrderSuccess}
+                    waUrl={orderWaUrl}
+                    onClose={() => setShowOrderSuccess(false)}
                 />
 
                 {/* Toast Notification Overlay */}
