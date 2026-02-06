@@ -375,37 +375,55 @@ const ProfilePage = () => {
 
         // 2. Calculate Shipping Cost based on Courier
         if (selectedCourier && distance > 0) {
-            // Validation: Auto-reset courier if distance exceeds limits
-            if (selectedCourier === "Grab/GoSend" && distance > 40) {
-                setSelectedCourier('');
-                setShippingCost(0);
-                return;
+            // Validation: Auto-reset courier if distance or weight exceeds limits
+            if (selectedCourier === "Grab/GoSend") {
+                if (distance > 40 || weight > 20000) {
+                    setSelectedCourier('');
+                    setShippingCost(0);
+                    // Optional: alert user (handled by UI usually or just reset)
+                    if (weight > 20000) setMessage({ type: "warning", text: "Maksimal berat untuk GoSend/Grab adalah 20kg." });
+                    return;
+                }
             }
-            if (selectedCourier === "Lalamove" && distance > 60) {
-                setSelectedCourier('');
-                setShippingCost(0);
-                return;
+            if (selectedCourier === "Lalamove") {
+                if (distance > 60 || weight > 20000) {
+                    setSelectedCourier('');
+                    setShippingCost(0);
+                    if (weight > 20000) setMessage({ type: "warning", text: "Maksimal berat untuk Lalamove Motor adalah 20kg." });
+                    return;
+                }
             }
 
             const weightKg = Math.ceil(weight / 1000) || 1; // Round up to nearest kg
             let cost = 0;
 
             if (selectedCourier === "TIKI") {
-                // TIKI: Weight-based (Regular) - No distance multiplier
-                cost = weightKg * 18000;
-                if (cost < 18000) cost = 18000;
+                // TIKI: Distance & Weight based (Zone Approximation)
+                let ratePerKg = 28000; // National
+                if (distance <= 50) ratePerKg = 12000; // Local (City)
+                else if (distance <= 150) ratePerKg = 18000; // Regional (Boditabek/West Java)
+
+                cost = weightKg * ratePerKg;
             } else if (selectedCourier === "J&T") {
-                // J&T: Weight-based (Regular) - No distance multiplier
-                cost = weightKg * 15000;
-                if (cost < 15000) cost = 15000;
+                // J&T: Distance & Weight based (Zone Approximation)
+                let ratePerKg = 25000; // National
+                if (distance <= 50) ratePerKg = 10000; // Local (City)
+                else if (distance <= 150) ratePerKg = 15000; // Regional (Boditabek/West Java)
+
+                cost = weightKg * ratePerKg;
             } else if (selectedCourier === "Grab/GoSend") {
-                // local: Distance-based
-                cost = distance * 5000;
-                if (cost < 15000) cost = 15000;
-                if (weightKg > 20) cost += (weightKg - 20) * 2000;
+                // Grab/GoSend Instant (Motor):
+                // Real: Base ~15k-20k, then ~3.000 - 3.500/km.
+                // We use a simplified model: 3.500/km, but minimum 20.000.
+                // Weight does not affect price for "Instant Bike", but limits to 20kg.
+                cost = distance * 3500;
+                if (cost < 20000) cost = 20000;
             } else if (selectedCourier === "Lalamove") {
-                // local: Distance-based
-                cost = 20000 + (distance * 4000);
+                // Lalamove (Motor):
+                // Real: Base ~8.000 (0-4km), then ~2.400 - 2.800/km.
+                // We use: Base 8.000 + 2.500/km for distance > 4km.
+                let chargeDist = Math.max(0, distance - 4);
+                cost = 8000 + (chargeDist * 2500);
             }
 
             setShippingCost(Math.round(cost));
@@ -465,7 +483,7 @@ const ProfilePage = () => {
 
     // Clear courier error message when a courier is selected
     useEffect(() => {
-        if (selectedCourier && message.text && (message.text.includes("kurir") || message.text.includes("produk"))) {
+        if (selectedCourier && message.text && (message.text.includes("kurir"))) {
             setMessage({ type: "", text: "" });
         }
     }, [selectedCourier]);
@@ -632,14 +650,14 @@ const ProfilePage = () => {
                 const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(finalTotal);
 
                 // Format Product List for WhatsApp
-                const productList = selectedItems.map(item => `- ${item.name} (x${item.quantity})`).join('%0A');
+                const productList = selectedItems.map(item => `- ${item.name} (x${item.quantity})`).join('\n');
 
                 const buyerName = `${user.firstName} ${user.lastName}`;
                 const buyerPhone = user.phone || formData.phone;
 
                 // Construct WhatsApp Message
-                const waMessage = `Halo Admin, saya ada pesanan baru.%0A%0AID: ${transactionId.toUpperCase().substring(0, 8)}%0ANama: ${buyerName}%0ANo. HP: ${buyerPhone}%0AAlamat: ${deliveryAddress}%0A%0ADetail Pesanan:%0A${productList}%0A%0ASubtotal: ${formattedSubtotal}%0ABiaya Pengiriman (${selectedCourier}): ${formattedShipping}%0ATotal Pembayaran: ${formattedTotal}%0A%0AMohon diproses, terima kasih.`;
-                const waUrl = `https://wa.me/6281284124422?text=${waMessage}`;
+                const waMessage = `Halo Admin, saya ada pesanan baru.\n\nID: ${transactionId.toUpperCase().substring(0, 8)}\nNama: ${buyerName}\nNo. HP: ${buyerPhone}\nAlamat: ${deliveryAddress}\n\nDetail Pesanan:\n${productList}\n\nSubtotal: ${formattedSubtotal}\nBiaya Pengiriman (${selectedCourier}): ${formattedShipping}\nTotal Pembayaran: ${formattedTotal}\n\nMohon diproses, terima kasih.`;
+                const waUrl = `https://wa.me/6281284124422?text=${encodeURIComponent(waMessage)}`;
 
                 // Set WhatsApp URL and show success modal instead of opening immediately
                 setOrderWaUrl(waUrl);
@@ -861,7 +879,7 @@ const ProfilePage = () => {
                     <div className="col-md-9">
                         <div className="card border-0 shadow-sm rounded-4">
                             <div className="card-body p-4">
-                                {message.text && (
+                                {message.text && !message.text.includes("kurir") && (
                                     <div className={`alert alert-${message.type} mb-4`} role="alert">
                                         {message.text}
                                     </div>
@@ -1115,6 +1133,7 @@ const ProfilePage = () => {
                                 {activeTab === "carts" && (
                                     <div>
                                         <h4 className="fw-bold mb-4">Keranjang</h4>
+
 
                                         {cart && cart.length > 0 ? (
                                             (() => {
@@ -1447,10 +1466,10 @@ const ProfilePage = () => {
                                                                             <div className="card mb-3 border shadow-sm rounded-4 overflow-hidden" key={index}>
                                                                                 <div className="card-body p-3">
                                                                                     <div className="d-flex gap-3">
-                                                                                        <div className="d-flex flex-column align-items-center gap-2">
+                                                                                        <div className="d-flex align-items-center gap-2">
                                                                                             <input
                                                                                                 type="checkbox"
-                                                                                                className="form-check-input mt-1"
+                                                                                                className="form-check-input"
                                                                                                 checked={item.selected !== false}
                                                                                                 onChange={() => toggleItemSelection(realIndex)}
                                                                                                 style={{ width: '20px', height: '20px' }}
@@ -1640,25 +1659,25 @@ const ProfilePage = () => {
 
                                                                 {/* DOA GUARANTEE BANNER */}
                                                                 <div
-                                                                    className="mb-3 p-3 rounded-3 border border-primary-subtle bg-primary-subtle bg-opacity-10 cursor-pointer transition-all hover-shadow-sm"
+                                                                    className="mb-3 p-2 rounded-3 border border-primary-subtle bg-primary-subtle bg-opacity-10 cursor-pointer transition-all hover-shadow-sm"
                                                                     onClick={() => setShowDOAModal(true)}
                                                                     style={{ cursor: 'pointer', transition: 'all 0.2s' }}
                                                                 >
-                                                                    <div className="d-flex align-items-center gap-3">
-                                                                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '36px', height: '36px' }}>
-                                                                            <i className="bi bi-shield-check"></i>
+                                                                    <div className="d-flex align-items-center gap-2">
+                                                                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: '30px', height: '30px' }}>
+                                                                            <i className="bi bi-shield-check" style={{ fontSize: '0.9rem' }}></i>
                                                                         </div>
                                                                         <div className="flex-grow-1">
-                                                                            <h6 className="mb-0 fw-bold text-primary" style={{ fontSize: '0.9rem' }}>Garansi DOA (Death On Arrival)</h6>
-                                                                            <p className="mb-0 text-muted" style={{ fontSize: '0.75rem' }}>Klik untuk melihat ketentuan garansi ikan mati.</p>
+                                                                            <h6 className="mb-0 fw-bold text-primary" style={{ fontSize: '0.85rem' }}>Garansi DOA (Death On Arrival)</h6>
+                                                                            <p className="mb-0 text-muted d-none d-md-block" style={{ fontSize: '0.75rem' }}>Klik untuk melihat ketentuan garansi ikan mati.</p>
                                                                         </div>
-                                                                        <i className="bi bi-chevron-right text-primary"></i>
+                                                                        <i className="bi bi-chevron-right text-primary" style={{ fontSize: '0.9rem' }}></i>
                                                                     </div>
                                                                 </div>
 
                                                                 {/* SHIPPING SECTION */}
                                                                 <div className="mb-3 pb-3 border-bottom" id="courier-section">
-                                                                    {message.text && (message.text.includes("kurir") || message.text.includes("produk")) && (
+                                                                    {message.text && (message.text.includes("kurir")) && (
                                                                         <div className={`alert alert-${message.type} py-2 mb-3`} style={{ fontSize: '0.85rem' }}>
                                                                             <i className="bi bi-exclamation-triangle-fill me-2"></i>
                                                                             {message.text}
@@ -1670,13 +1689,21 @@ const ProfilePage = () => {
                                                                             const isGrab = courier === 'Grab/GoSend';
                                                                             const isLalamove = courier === 'Lalamove';
                                                                             const isTooFar = (isGrab && distance > 40) || (isLalamove && distance > 60);
+                                                                            const isTooHeavy = (isGrab || isLalamove) && totalWeight > 20000;
 
                                                                             return (
                                                                                 <div className="col-6" key={courier}>
                                                                                     <button
-                                                                                        className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'} ${isTooFar ? 'opacity-50 grayscale' : ''}`}
+                                                                                        className={`btn btn-sm w-100 border ${selectedCourier === courier ? 'btn-primary border-primary' : 'btn-light'} ${(isTooFar || isTooHeavy) ? 'opacity-50 grayscale' : ''}`}
                                                                                         onClick={() => {
-                                                                                            if (isTooFar) return;
+                                                                                            if (isTooFar) {
+                                                                                                setToast(`${courier} hanya mencakup jarak maksimal ${isGrab ? '40' : '60'}km. Jarak Anda: ${distance}km`);
+                                                                                                return;
+                                                                                            }
+                                                                                            if (isTooHeavy) {
+                                                                                                setToast(`${courier} hanya bisa membawa barang maksimal 20kg. Berat saat ini: ${(totalWeight / 1000).toFixed(2)}kg`);
+                                                                                                return;
+                                                                                            }
 
                                                                                             // Check if any products are selected
                                                                                             const hasSelectedItems = cart.some(item => item.selected !== false);
@@ -1688,12 +1715,13 @@ const ProfilePage = () => {
 
                                                                                             setSelectedCourier(courier);
                                                                                         }}
-                                                                                        disabled={isTooFar}
-                                                                                        style={{ fontSize: '0.75rem', filter: isTooFar ? 'grayscale(1)' : 'none' }}
-                                                                                        title={isTooFar ? `Maksimal jarak ${isGrab ? '40' : '60'}km` : ''}
+                                                                                        disabled={false} // Always allow click to show feedback
+                                                                                        style={{ fontSize: '0.75rem', filter: (isTooFar || isTooHeavy) ? 'grayscale(1)' : 'none' }}
+                                                                                        title={isTooFar ? `Maksimal jarak ${isGrab ? '40' : '60'}km` : (isTooHeavy ? 'Berat melebihi 20kg' : '')}
                                                                                     >
                                                                                         {courier}
-                                                                                        {isTooFar && <div style={{ fontSize: '0.6rem', color: '#dc3545' }}>Jarak terlalu jauh</div>}
+                                                                                        {isTooFar && <div style={{ fontSize: '0.6rem', color: '#dc3545' }}>Hanya tersedia utk jarak max {isGrab ? '40' : '60'}km</div>}
+                                                                                        {isTooHeavy && !isTooFar && <div style={{ fontSize: '0.6rem', color: '#dc3545' }}>Melebihi max 20kg</div>}
                                                                                     </button>
                                                                                 </div>
                                                                             );
@@ -1709,30 +1737,46 @@ const ProfilePage = () => {
                                                                                 <i className="bi bi-box-seam-fill me-1"></i> {totalWeight < 1000 ? `${totalWeight} g` : `${(totalWeight / 1000).toFixed(2)} kg`}
                                                                             </small>
                                                                         </div>
-                                                                        {distance > 40 && (
-                                                                            <small className="text-danger" style={{ fontSize: '0.65rem' }}>
-                                                                                * Grab/GoSend hanya tersedia untuk jarak max 40km.
-                                                                            </small>
-                                                                        )}
-                                                                        {distance > 60 && (
-                                                                            <small className="text-danger" style={{ fontSize: '0.65rem' }}>
-                                                                                * Lalamove hanya tersedia untuk jarak max 60km.
-                                                                            </small>
-                                                                        )}
+
                                                                     </div>
                                                                 </div>
 
-                                                                <div className="d-flex justify-content-between mb-3 pb-3 border-bottom">
-                                                                    <span className="fw-bold text-dark">Biaya Pengiriman</span>
-                                                                    <span className="text-primary fw-bold">
-                                                                        {shippingCost > 0 ? `Rp${shippingCost.toLocaleString("id-ID")}` : '-'}
-                                                                    </span>
-                                                                </div>
-
-                                                                <div className="d-flex justify-content-between mb-2">
-                                                                    <span className="fw-bold text-dark fs-5">Total Pembayaran</span>
-                                                                    <div className="text-end">
-                                                                        <span className="fw-bold text-primary fs-5 d-block">
+                                                                <div className="d-flex flex-column gap-2 mb-3 pb-3 border-bottom">
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <span className="text-muted">Berat Total</span>
+                                                                        <span className="fw-bold">{totalWeight < 1000 ? `${totalWeight} g` : `${(totalWeight / 1000).toFixed(2)} kg`}</span>
+                                                                    </div>
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <span className="text-muted">Biaya Pengiriman</span>
+                                                                        <span className="fw-bold text-dark">
+                                                                            {shippingCost > 0 ? `Rp${shippingCost.toLocaleString("id-ID")}` : '-'}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <span className="text-muted">Subtotal</span>
+                                                                        <span className="fw-bold">
+                                                                            Rp{cart.reduce((acc, item) => {
+                                                                                if (item.selected !== false) {
+                                                                                    let effectivePrice = item.price;
+                                                                                    if (item.tier_pricing && item.tier_pricing.length > 0) {
+                                                                                        const sortedTiers = [...item.tier_pricing].sort((a, b) => b.quantity - a.quantity);
+                                                                                        const tier = sortedTiers.find((t) => item.quantity >= t.quantity);
+                                                                                        if (tier) {
+                                                                                            if (tier.unit_price) effectivePrice = tier.unit_price;
+                                                                                            else if (tier.discount_percentage && item.base_price) effectivePrice = item.base_price * (1 - tier.discount_percentage / 100);
+                                                                                        } else if (item.base_price) {
+                                                                                            effectivePrice = item.base_price;
+                                                                                        }
+                                                                                    }
+                                                                                    return acc + (effectivePrice * item.quantity);
+                                                                                }
+                                                                                return acc;
+                                                                            }, 0).toLocaleString("id-ID")}
+                                                                        </span>
+                                                                    </div>
+                                                                    <div className="d-flex justify-content-between pt-2 border-top">
+                                                                        <span className="fw-bold text-dark fs-5">Total Pembayaran</span>
+                                                                        <span className="fw-bold text-primary fs-5">
                                                                             Rp{(cart.reduce((acc, item) => {
                                                                                 if (item.selected !== false) {
                                                                                     let effectivePrice = item.price;
@@ -1751,11 +1795,14 @@ const ProfilePage = () => {
                                                                                 return acc;
                                                                             }, 0) + shippingCost).toLocaleString("id-ID")}
                                                                         </span>
-                                                                        <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
-                                                                            (Belum termasuk Biaya Pengiriman)
-                                                                        </small>
-
                                                                     </div>
+                                                                    {(shippingCost === 0) && (
+                                                                        <div className="text-end">
+                                                                            <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
+                                                                                (Belum termasuk Biaya Pengiriman)
+                                                                            </small>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
 
                                                                 <button
@@ -1993,24 +2040,65 @@ const ProfilePage = () => {
                                                                 </div>
 
                                                                 {/* Total Payment */}
-                                                                <div className="text-center text-md-end">
-                                                                    {trx.shipping_cost > 0 && (
-                                                                        <div className="mb-2">
-                                                                            <p className="small text-muted mb-0">
-                                                                                Biaya Pengiriman ({trx.courier_name}):
-                                                                                <span className="ms-1 fw-bold text-dark">Rp{Number(trx.shipping_cost).toLocaleString('id-ID')}</span>
-                                                                            </p>
-                                                                        </div>
-                                                                    )}
-                                                                    <p className="small text-muted mb-1">Total Pembayaran</p>
-                                                                    <h4 className="fw-bold text-primary mb-0">
-                                                                        Rp{Number(trx.total_payment || trx.total_amount).toLocaleString('id-ID')}
-                                                                    </h4>
-                                                                    {(!trx.total_payment || trx.shipping_cost === 0) && (
-                                                                        <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
-                                                                            (Belum termasuk Biaya Pengiriman)
-                                                                        </small>
-                                                                    )}
+                                                                <div className="w-100 mt-3 mt-md-0">
+                                                                    {(() => {
+                                                                        const totalWeight = (trx.detail?.products || trx.products || []).reduce((acc, item) => {
+                                                                            const isReseller = item.is_reseller === true ||
+                                                                                (item.name && item.name.toLowerCase().includes("[reseller]")) ||
+                                                                                (productReseller && item.product_id && productReseller.some(p => p.id === item.product_id || p._id === item.product_id));
+
+                                                                            const weight = item.weight || 0;
+                                                                            const qty = item.quantity || 0;
+
+                                                                            if (isReseller) {
+                                                                                return acc + ((weight / 10) * qty); // Weight is per 10pcs bundle
+                                                                            }
+                                                                            return acc + (weight * qty);
+                                                                        }, 0);
+
+                                                                        return (
+                                                                            <div className="d-flex flex-column gap-2">
+                                                                                {/* Total Weight */}
+                                                                                <div className="d-flex justify-content-between justify-content-md-end align-items-center gap-md-3">
+                                                                                    <span className="small text-muted">Berat Total:</span>
+                                                                                    <span className="fw-bold text-dark">
+                                                                                        {totalWeight < 1000 ? `${totalWeight} g` : `${(totalWeight / 1000).toFixed(2)} kg`}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                {/* Shipping Cost */}
+                                                                                <div className="d-flex justify-content-between justify-content-md-end align-items-center gap-md-3">
+                                                                                    <span className="small text-muted">Biaya Pengiriman ({trx.courier_name || '-'}):</span>
+                                                                                    <span className="fw-bold text-dark">
+                                                                                        {trx.shipping_cost > 0 ? `Rp${Number(trx.shipping_cost).toLocaleString('id-ID')}` : '-'}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                {/* Subtotal */}
+                                                                                <div className="d-flex justify-content-between justify-content-md-end align-items-center gap-md-3">
+                                                                                    <span className="small text-muted">Subtotal:</span>
+                                                                                    <span className="fw-bold text-dark">
+                                                                                        Rp{Number((trx.total_payment || trx.total_amount) - (trx.shipping_cost || 0)).toLocaleString('id-ID')}
+                                                                                    </span>
+                                                                                </div>
+
+                                                                                {/* Total Payment */}
+                                                                                <div className="d-flex justify-content-between justify-content-md-end align-items-center gap-md-3 pt-2 border-top border-md-0">
+                                                                                    <span className="small text-muted">Total Pembayaran</span>
+                                                                                    <h4 className="fw-bold text-primary mb-0">
+                                                                                        Rp{Number(trx.total_payment || trx.total_amount).toLocaleString('id-ID')}
+                                                                                    </h4>
+                                                                                </div>
+                                                                                {(!trx.total_payment || trx.shipping_cost === 0) && (
+                                                                                    <div className="text-end">
+                                                                                        <small className="text-muted fst-italic" style={{ fontSize: "0.75rem" }}>
+                                                                                            (Belum termasuk Biaya Pengiriman)
+                                                                                        </small>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        );
+                                                                    })()}
                                                                 </div>
                                                             </div>
                                                         </div>

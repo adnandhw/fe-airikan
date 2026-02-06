@@ -1,4 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import SEO from "../components/SEO";
 import { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { Context } from "../MyContext";
@@ -220,11 +221,11 @@ const ProductDetail = () => {
           onClose={() => setShowDOAModal(false)}
         />
 
-        <div className="row g-5">
+        <div className="row g-3 align-items-stretch">
 
           {/* 🔹 IMAGE */}
           <div className="col-md-6">
-            <div className="detail-image-box position-relative">
+            <div className="detail-image-box position-relative h-400-desktop">
               {isDiscountActive && (
                 <div className="position-absolute top-0 start-0 m-3 bg-danger text-white px-3 py-2 rounded-3 fw-bold fs-5 z-2 shadow-sm">
                   {data.discount_percentage}% OFF
@@ -242,7 +243,8 @@ const ProductDetail = () => {
               <img
                 src={data.image_url}
                 alt={data.name}
-                className="detail-img"
+                className="detail-img w-100 h-100 object-fit-contain"
+                style={{ objectFit: 'contain' }}
               />
             </div>
 
@@ -253,8 +255,7 @@ const ProductDetail = () => {
           <div className="col-md-6">
 
             {/* PURCHASE CARD (Now contains ALL Info) */}
-            <div className="purchase-card p-3 d-flex flex-column justify-content-between"
-              style={{ minHeight: '400px' }}>
+            <div className="purchase-card p-3 d-flex flex-column h-400-desktop">
 
               {/* PRODUCT HEADER (Moved Inside) */}
               <div className="mb-2 border-bottom pb-2">
@@ -262,7 +263,7 @@ const ProductDetail = () => {
                   {data.name}
                 </h2>
 
-                <div className="d-flex align-items-center gap-2 mb-2">
+                <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
                   <p className="detail-type mb-0" style={{ fontSize: '1rem' }}>
                     {data.type}
                   </p>
@@ -302,7 +303,7 @@ const ProductDetail = () => {
               </div>
 
               {/* ACTION GROUP (Stock, Total, Buttons) - Flex Grow to push down if needed */}
-              <div className="d-flex flex-column justify-content-end flex-grow-1">
+              <div className="mt-auto">
 
                 {/* STOCK & QUANTITY */}
                 {/* QUANTITY & TOTAL ROW */}

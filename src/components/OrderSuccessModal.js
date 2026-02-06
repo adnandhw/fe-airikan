@@ -25,7 +25,7 @@ const OrderSuccessModal = ({ show, onClose, waUrl }) => {
                         <div className="mb-4">
                             <div
                                 className="rounded-circle d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success"
-                                style={{ width: "90px", height: "90px" }}
+                                style={{ width: "80px", height: "80px" }}
                             >
                                 <i className="bi bi-cart-check fs-1"></i>
                             </div>
@@ -44,7 +44,7 @@ const OrderSuccessModal = ({ show, onClose, waUrl }) => {
                                     href={waUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="btn btn-primary py-3 fw-bold rounded-pill text-uppercase shadow-sm"
+                                    className="btn btn-success py-3 fw-bold rounded-pill text-uppercase shadow-sm"
                                     onClick={onClose}
                                 >
                                     <i className="bi bi-whatsapp me-2"></i> Hubungi Admin untuk Pembayaran
@@ -52,7 +52,7 @@ const OrderSuccessModal = ({ show, onClose, waUrl }) => {
                             )}
                             <button
                                 onClick={onClose}
-                                className="btn btn-outline-secondary py-3 fw-bold rounded-pill text-uppercase border-2"
+                                className="btn btn-light py-3 fw-bold rounded-pill text-uppercase text-muted"
                             >
                                 Lihat Transaksi Saya
                             </button>

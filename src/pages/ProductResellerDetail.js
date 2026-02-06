@@ -6,6 +6,7 @@ import { Context } from "../MyContext";
 import AddToCartSuccessModal from "../components/AddToCartSuccessModal";
 import LoginRequiredModal from "../components/LoginRequiredModal";
 import DOAModal from "../components/DOAModal";
+import SEO from "../components/SEO";
 
 const ProductResellerDetail = () => {
     const { id } = useParams();
@@ -61,6 +62,11 @@ const ProductResellerDetail = () => {
             }
         }
     }, [quantity]);
+
+    // Scroll to top on mount or id change
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [id]);
 
     if (!data) {
         return (
@@ -242,7 +248,7 @@ const ProductResellerDetail = () => {
 
                     {/* 🔹 IMAGE */}
                     <div className="col-md-6">
-                        <div className="detail-image-box position-relative" style={{ height: '500px' }}>
+                        <div className="detail-image-box position-relative">
 
                             <div className="position-absolute top-0 end-0 m-3 d-flex flex-column align-items-end gap-2">
                                 <span className="badge bg-primary text-white fs-6 shadow-sm">
@@ -266,26 +272,26 @@ const ProductResellerDetail = () => {
                     {/* 🔹 INFO */}
                     <div className="col-md-6">
 
-                        <div className="purchase-card p-3 d-flex flex-column" style={{ height: '500px' }}>
+                        <div className="purchase-card p-3 d-flex flex-column">
 
                             {/* HEADER SECTION: Title, Type, Price */}
                             <div className="mb-2 border-bottom pb-2">
-                                <h2 className="detail-title" style={{ fontSize: '1.25rem' }}>
+                                <h2 className="detail-title">
                                     {data.name}
                                 </h2>
 
-                                <div className="d-flex align-items-center gap-2 mb-2">
-                                    <p className="detail-type mb-0" style={{ fontSize: '0.85rem' }}>
+                                <div className="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                    <p className="detail-type mb-0">
                                         {data.type}
                                     </p>
 
-                                    <div className="spec-badge mb-0" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
+                                    <div className="spec-badge mb-0">
                                         <span className="spec-label">Ukuran:</span>
                                         <strong>{data.size}</strong>
                                     </div>
 
                                     {data.weight > 0 && (
-                                        <div className="spec-badge mb-0" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>
+                                        <div className="spec-badge mb-0">
                                             <span className="spec-label">Berat:</span>
                                             <strong>{data.weight} g / 10 pcs</strong>
                                         </div>
@@ -294,13 +300,13 @@ const ProductResellerDetail = () => {
 
                                 <div className="mt-1">
                                     {effectivePrice < data.price && (
-                                        <h6 className="text-decoration-line-through text-muted mb-0" style={{ fontSize: '0.8rem' }}>
+                                        <h6 className="text-decoration-line-through text-muted mb-0" style={{ fontSize: '0.9rem' }}>
                                             Rp {Number(data.price).toLocaleString("id-ID")}
                                         </h6>
                                     )}
-                                    <h4 className="detail-price m-0" style={{ fontSize: '1.35rem' }}>
+                                    <h4 className="detail-price m-0">
                                         Rp {Number(effectivePrice).toLocaleString("id-ID")}
-                                        <span className="text-muted fs-6 ms-1 fw-normal" style={{ fontSize: '0.9rem' }}>/ pcs</span>
+                                        <span className="text-muted fs-6 ms-1 fw-normal">/ pcs</span>
                                     </h4>
                                 </div>
                             </div>
@@ -308,8 +314,8 @@ const ProductResellerDetail = () => {
                             {/* WHOLESALE TABLE (Scrollable if needed, compacted) */}
                             {sortedTiers.length > 0 && (
                                 <div className="border rounded-3 p-2 mb-3 bg-light">
-                                    <h6 className="fw-bold mb-1" style={{ fontSize: '0.80rem' }}>Harga Grosir</h6>
-                                    <div className="table-responsive" ref={tableContainerRef} style={{ maxHeight: '130px' }}>
+                                    <h6 className="fw-bold mb-1" style={{ fontSize: '0.9rem' }}>Harga Grosir</h6>
+                                    <div className="table-responsive wholesale-table-container" ref={tableContainerRef}>
                                         <table className="table table-sm table-bordered mb-0 bg-white" style={{ fontSize: '0.8rem' }}>
                                             <thead className="table-light">
                                                 <tr>

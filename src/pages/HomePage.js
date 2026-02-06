@@ -1,3 +1,5 @@
+import SEO from "../components/SEO";
+
 import { useEffect, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BannerPromotion from "../components/Banner";
@@ -27,6 +29,11 @@ const HomePage = () => {
 
   return (
     <>
+      <SEO
+        title="Air Ikan Store - Jual Ikan Predator & Hias Terlengkap di Jakarta"
+        description="Air Ikan Store menyediakan berbagai jenis ikan predator dan ikan hias kualitas terbaik. Garansi DOA dan pengiriman aman ke seluruh Indonesia."
+        keywords="air ikan store, air ikan, ikan predator, jual ikan predator, jual ikan hias, channa maru, channa auranti, arwana super red, peacock bass, ikan hias dan ikan predator jakarta, toko ikan predator, datz, guppy, neon tetra, denisoni, palmas, cichlid, pleco, brackish, barb, orna, blue electric, asiatica, golden red, silver red, discus, louhan, koki, oscar, manfish, ikan air tawar"
+      />
       <LoginSuccessModal show={showLoginSuccess} onClose={() => setShowLoginSuccess(false)} />
 
       <section className="banner-section">
@@ -74,12 +81,12 @@ const HomePage = () => {
           <div className="container">
             <div className="section-title">
               <div>
-                <h2 className="main-title">Reseller</h2>
+                <h2 className="main-title">Produk Reseller</h2>
                 <p className="section-subtitle mb-0">Penawaran harga khusus untuk resellers</p>
               </div>
               <a href="/product-reseller" className="btn btn-outline-primary rounded-pill px-4">Lihat Semua</a>
             </div>
-            <ProductResellerCard data={productReseller.filter(p => p.is_active !== false).slice(0, 12)} />
+            <ProductResellerCard data={productReseller.filter(p => p.is_active !== false && p.stock > 0).slice(0, 12)} />
           </div>
         </section>
       )}
@@ -92,7 +99,7 @@ const HomePage = () => {
             </div>
             <a href="/product" className="btn btn-outline-primary rounded-pill px-4">Lihat Semua</a>
           </div>
-          <Product data={product.slice(0, 12)} />
+          <Product data={product.filter(p => p.stock > 0).slice(0, 12)} />
         </div>
       </section>
 

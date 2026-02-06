@@ -36,7 +36,7 @@ body,
 
 .navbar {
   padding: 15px 0;
-  background-color: rgba(249, 250, 251, 0.95);
+  background-color: rgba(241, 245, 249, 0.95);
   backdrop-filter: blur(10px);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -289,6 +289,7 @@ body,
 .category-content {
   padding: 1.25rem;
   text-align: center;
+  border-top: 1px solid #94a3b8;
 }
 
 .category-name {
@@ -306,7 +307,7 @@ body,
   padding: 10px;
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
   border: 1px solid #e2e8f0;
-  height: 400px;
+  height: 500px;
   /* Fixed height for the container */
   display: flex;
   align-items: center;
@@ -316,7 +317,7 @@ body,
 
 @media (max-width: 768px) {
   .detail-image-box {
-    height: 300px;
+    height: 350px;
   }
 }
 
@@ -363,7 +364,7 @@ body,
 
 .product-details {
   padding: 1.25rem;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid #94a3b8;
 }
 
 @media (max-width: 768px) {
@@ -544,6 +545,14 @@ body,
   padding: 1rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   margin-top: 0;
+  height: 500px;
+}
+
+@media (max-width: 768px) {
+  .purchase-card {
+    height: auto;
+    min-height: auto;
+  }
 }
 
 .spec-badge {
@@ -620,4 +629,34 @@ body,
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 0;
+}
+
+.wholesale-table-container {
+  max-height: 130px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .wholesale-table-container {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+/* Custom Height Override for Product Detail */
+.h-400-desktop {
+  height: 400px !important;
+}
+
+@media (max-width: 768px) {
+  .h-400-desktop {
+    height: auto !important;
+    /* Allow auto height on mobile if needed, or specific mobile height */
+  }
+
+  /* Ensure image box matches the mobile height established for others if needed override */
+  .detail-image-box.h-400-desktop {
+    height: 350px !important;
+    /* Keep the mobile height consistent or adjust if requested */
+  }
 }

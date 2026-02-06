@@ -12,7 +12,7 @@ const ProductResellerPage = () => {
 
     const filteredAndSortedProducts = useMemo(() => {
         // Filter active products only (default to true if undefined)
-        let result = productReseller.filter(p => p.is_active !== false);
+        let result = productReseller.filter(p => p.is_active !== false && p.stock > 0);
 
         // 0. Apply URL Filter
         const filterParam = new URLSearchParams(location.search).get("filter");

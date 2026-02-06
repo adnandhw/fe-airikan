@@ -15,7 +15,7 @@ const AdvantagesPage = () => {
             icon: "bi-collection-fill",
             color: "text-primary",
             bg: "rgba(59, 130, 246, 0.1)", // blue
-            title: "Koleksi Lengkap & Variatif",
+            title: "Koleksi yang Variatif",
             desc: "Tersedia berbagai jenis ikan hias dan ikan predator dengan pilihan ukuran dan karakter yang beragam, cocok untuk penghobi pemula hingga kolektor."
         },
         {

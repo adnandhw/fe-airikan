@@ -89,7 +89,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h5 className="fw-bold mb-1">Kunjungi Toko Kami</h5>
-                      <p className="text-secondary mb-0">Air Ikan, Jakarta Timur, Indonesia</p>
+                      <p className="text-secondary mb-0">Jl. Otista Raya Gg. H. Abd Rahman No.4, Jatinegara, Jaktim</p>
                     </div>
                   </div>
                 </div>

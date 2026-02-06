@@ -18,7 +18,7 @@ const ProductPage = () => {
   // For now, keeping the logic simple.
 
   const filteredAndSortedProducts = useMemo(() => {
-    let result = [...product];
+    let result = [...product].filter(p => p.stock > 0);
 
     // 0. Apply URL Filter (e.g. Discount Only) - Priority 1
     if (urlFilter === "only_discount") {

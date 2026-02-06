@@ -33,7 +33,7 @@ const Footer = () => {
                 className="text-decoration-none"
               >
                 <p className="mb-0 fw-semibold text-light">Air Ikan Store</p>
-                <p className="text-secondary small mb-0">Jakarta Timur, Indonesia</p>
+                <p className="text-secondary small mb-0">Jl. Otista Raya Gg. H. Abd Rahman No.4, Jatinegara, Jakarta Timur</p>
               </a>
             </div>
 

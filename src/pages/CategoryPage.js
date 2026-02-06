@@ -1,11 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import CategoryCard from "../components/CategoryCard";
+import SEO from "../components/SEO";
 
 const CategoryPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get("search");
+
+  const pageTitle = searchQuery ? `Hasil Pencarian: ${searchQuery} - Air Ikan Store` : "Kategori Ikan Hias & Predator Lengkap";
+  const pageDescription = "Temukan berbagai kategori ikan hias air tawar, predator, pakan, dan perlengkapan aquarium. Kualitas terbaik dan garansi hidup.";
 
   return (
     <>
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        url={location.pathname + location.search}
+      />
       {/* MOBILE SEARCH (Visible only on mobile) */}
       <div className="d-block d-lg-none mt-3 container">
         <form
